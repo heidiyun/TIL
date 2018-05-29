@@ -38,10 +38,4 @@ if(object.getClass == this.class)
 	- 코틀린은 자바 표준 라이브러리 클래스에 의존한다. (자체 컬렉션 라이브러리 제공x)
 	- 자바 코드와 코틀린 소스 파일이 혼재해도 컴파일이 가능하다.
 	- 자바 메소드를 리팩토링해도 그 메소드와 관련 있는 코틀린 코드까지 제대로 변경됨.
-
-	```
-	class Person(val name: String, val age: Int) {
-    @Override
-    override fun equals(other: Any?): Boolean
-    ```
 	
