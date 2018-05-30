@@ -43,13 +43,13 @@
 >클라이언트가 프로퍼티에 접근할 때마다 프로퍼티 값을 매번 다시 계산한다.
 	( 프로퍼티의 자체 값을 저장하는 필드가 없다.)
 
-![property](/assets/커스텀접근자.png)
+![property](/kotlin/assets/커스텀접근자.png)
 
 <블록문을  제거한  코드>
 
 :이러한  코드는 setter에서는  적용  불가능하다.
 
-![property](/assets/커스텀접근자2.png)
+![property](/kotlin/assets/커스텀접근자2.png)
 
 ### 2.2.3 코틀린  소스코드  구조 : 디렉토리와  패키지
 
@@ -58,9 +58,9 @@
 		: 같은  패키지에  있다면  다른  파일에서  정의한  선언을  직접  사용  할  수  있다.
 		다른  패키지에  있다면  import를  통해  선언을  불러와야  한다.
 
-![property](/assets/패키지.png)
+![property](/kotlin/assets/패키지.png)
 
-![property](/assets/패키지2.png)
+![property](/kotlin/assets/패키지2.png)
 -   자바에서는  패키지  구조와  일치하는  디렉터리  계층  구조를  만들고, 클래스의  소스코드를  해당  패키지와  디렉토리에  위치시켜야  한다.
 	But, 코틀린은  패키지가  다른  여러  클래스를  한  파일에  위치  시켜도  된다.
 
@@ -70,7 +70,7 @@
 
 -   enum은  soft keyword (class 앞에서만  기능을  하고, 다른  곳에서는  이름으로  사용할  수  있다.)
 -   enum class도  프로퍼티와  메소드를  가질  수  있다.
-![property](/assets/enum.png)
+![property](/kotlin/assets/enum.png)
 
 ### 2.3.2 when으로  enum 클래스  다루기
 
@@ -80,12 +80,12 @@
 -   각  분기의  끝에  break;  구문을  넣지  않아도  된다.
 -   한  분기  안에서  여러  값을  매치하려면  값  사이를 (,)로  분리한다.
 
-![property](/assets/when.png)
+![property](/kotlin/assets/when.png)
 
-![property](/assets/when2.png)
+![property](/kotlin/assets/when2.png)
 -   그  외의  모든  값은  else로  처리한다.
 
-![property](/assets/when3.png)
+![property](/kotlin/assets/when3.png)
 
 ### 2.3.3 when과  임의의  객체를  함께  사용
 
@@ -101,7 +101,7 @@
 
 -   불필요한  코드의  중복을  줄일  수  있다.
 
-![property](/assets/smartcast.png)
+![property](/kotlin/assets/smartcast.png)
 
 -   Is를  사용할  수  있는  경우
 
@@ -125,4 +125,4 @@
 -   2.3.5의  if문을  when으로  변경한  코드
 
 -   스마트  캐스팅이  일어남.
-	![property](/assets/if.png)
+	![property](/kotlin/assets/if.png)
