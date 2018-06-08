@@ -1,3 +1,4 @@
+
 # 코틀린 생성자
 ```java
 	public class User {
@@ -106,12 +107,24 @@ public class User {
 		}
 
 		}
-		// 위와 같은 코드가 된다고 생각하시나요?
-		// 안됩니다.
-		// 이유 : 부 생성자는 명시적으로 주 생성자를 호출해줘야합니다.
-		// primary constructor called expected
-		// 단, 주 생성자가 디폴트로 선언되었다면, 생략 가능 합니다.
+		// 위와 같은 코드가 될까?
+```
 
+
+
+
+
+
+
+
+
+
+
+안됩니다.
+이유 : 부 생성자는 명시적으로 주 생성자를 호출해줘야합니다.
+primary constructor called expected
+단, 주 생성자가 디폴트로 선언되었다면, 생략 가능 합니다.
+```java
 	class User constructor(val name: String,
 		val age: Int,
 		val birthday: String) {
@@ -223,108 +236,6 @@ public class User {
 ```
 [참고문헌](https://thdev.tech/kotlin/2017/03/09/Kotlin-Constructor-Init.html)
 
-# 내부클래스와 중첩클래스
-중첩클래스를 알기위해서는 내부클래스에 대해서 먼저 알아야 합니다.
-
-**자바의 이너클래스**
-	: 안쪽 클래스를 인스턴스 변수처럼 사용하기 위해 사용한다.
-
-외부 클래스에서 내부 클래스를 사용하려면 바깥 클래스의 객체를 사용하여 안쪽 클래스를 객체화하고 그 객체로 내부 클래스의 자원을 사용한다.
-
-내부 클래스에서는 외부 클래스의 자원을 직접 사용가능합니다.
-```java
-	public class outer {
-		public class Inner{
-
-		}
-	}
-
-	>> outer out = new outer();
-		outer.Inner in = out.new Inner();
-		//in을 통해서 사용한다.
-```
-
-**자바의 중첩클래스**
-	: 내부의 클래스를 static 변수 처럼 사용합니다.
-
-외부 클래스의 static이 아닌 영역은 사용할 수 없습니다.
-```java
-	class Outer {
-		static class Nested {
-			static int k;
-			public static void inMethod() {...}
-		}
-	}
-
-	>> Nested.k = 10;
-	>> Nested.inMethod();
-```
-
-**내부 클래스와 중첩 클래스의 차이점**
-
-```java
-	interface State: Serializable  
-
- 	interface View {  
- 		fun getCurrentState(): State  
- 		fun restoreState(state: State) {}
- 	}
-
- /*자바*/
- 	public class Button implements View {
- 		@Override
- 		pubic State getCurrentState() {
- 			return new ButtonState();
- 		}
-
- 		@Override 
- 		public void restoreState(State state) {...}
- 		public class ButtonState implements State {...} // 내부 클래스
- 	}
-
- // 버튼의 상태를 직렬화하면 
- // java.io.NotSerializableException: Button 오류가 발생한다.		
-```
-
-자바에서 내부클래스는 암묵적으로 외부 클래스에 대한 참조를 포함합니다.
-	외부 클래스인 Button을 직렬화 할 수 없기 때문에, Button에 대한 참조가 ButtonState의 직렬화를 방해하게 됩니다.
-
-그래서 자바에서는 이러한 문제를 내부 클래스를 static으로 선언하는 것으로 해결합니다.
-	-> 외부 클래스에 대한 암묵적인 참조가 사라집니다.
-
-```java
-	public static class ButtonState implements State{ }
-```
-
-**코틀린**
-코틀린에서는 내부에 정의된 클래스 앞에 아무런 변경자가 붙어있지 않으면 자바의 중첩클래스와 같은 기능을 합니다.
-
-외부 클래스에 대한 참조를 포함하고싶고, 자바의 이너클래스와 같은 기능을 하고싶다면 클래스 앞에 inner변경자를 붙이면 됩니다.
-
-```java
-class Button : View {
-			override fun getCurrentState(): State = ButtonState()
-			override fun restoreState(state: State){...}
-			inner class ButtonState : State {...} // 내부 클래스
-		}
-```
-
-내부 클래스에서 외부 클래스의 참조에 접근하려면
-```java
-class Outer {
-	private val a: Int = 1
-	fun funName(): Int {...}
-		inner class Inner {
-			val a = this@Outer // Outer's this
-			val b = this@Inner // Inner's this
-			val c = this@Outer.a // 외부 클래스의 필드에 접근
-			val d = this@Outer.funName() // 외부 클래스의 메소드에 접근
-			fun getOuterReference(): Outer = this@Outer
-		}
-	}
-
-	>> val demo = Outer().Innter().getOuterFeference()
-```
 
 # 자바의 정적팩토리메소드
 > 객체 생성을 캡슐화 하는 기법
@@ -387,12 +298,12 @@ Character warrior = Character.newWarrior();
 	magicPoint = 3)
 ```
 
-2. 매번 새로운 객체 생성x 
+**매번 새로운 객체 생성x** 
 _flyweight 패턴과 비슷하다._
 위와 같이 정적 팩토리 메소드를 호출하면 매번 new연산자를 통해서 캐릭터 객체를 새롭게 생성하게 된다.
 기존의 객체를 반환하는 형식으로 이러한 문제점을 줄일 수 있다.
 
-3. 정적 팩토리 메소드가 구현되어 있는 클래스를 상속하는 하위 클래스의 객체를 반환할 수 있다.
+**정적 팩토리 메소드가 구현되어 있는 클래스를 상속하는 하위 클래스의 객체를 반환할 수 있다.**
 
 ```java
 	public class User {
@@ -544,4 +455,107 @@ _flyweight 패턴과 비슷하다._
 		}
 	}
 
+```
+
+# 내부클래스와 중첩클래스
+중첩클래스를 알기위해서는 내부클래스에 대해서 먼저 알아야 합니다.
+
+**자바의 이너클래스**
+	: 안쪽 클래스를 인스턴스 변수처럼 사용하기 위해 사용한다.
+
+외부 클래스에서 내부 클래스를 사용하려면 바깥 클래스의 객체를 사용하여 안쪽 클래스를 객체화하고 그 객체로 내부 클래스의 자원을 사용한다.
+
+내부 클래스에서는 외부 클래스의 자원을 직접 사용가능합니다.
+```java
+	public class outer {
+		public class Inner{
+
+		}
+	}
+
+	>> outer out = new outer();
+		outer.Inner in = out.new Inner();
+		//in을 통해서 사용한다.
+```
+
+**자바의 중첩클래스**
+	: 내부의 클래스를 static 변수 처럼 사용합니다.
+
+외부 클래스의 static이 아닌 영역은 사용할 수 없습니다.
+```java
+	class Outer {
+		static class Nested {
+			static int k;
+			public static void inMethod() {...}
+		}
+	}
+
+	>> Nested.k = 10;
+	>> Nested.inMethod();
+```
+
+**내부 클래스와 중첩 클래스의 차이점**
+
+```java
+	interface State: Serializable  
+
+ 	interface View {  
+ 		fun getCurrentState(): State  
+ 		fun restoreState(state: State) {}
+ 	}
+
+ /*자바*/
+ 	public class Button implements View {
+ 		@Override
+ 		pubic State getCurrentState() {
+ 			return new ButtonState();
+ 		}
+
+ 		@Override 
+ 		public void restoreState(State state) {...}
+ 		public class ButtonState implements State {...} // 내부 클래스
+ 	}
+
+ // 버튼의 상태를 직렬화하면 
+ // java.io.NotSerializableException: Button 오류가 발생한다.		
+```
+
+자바에서 내부클래스는 암묵적으로 외부 클래스에 대한 참조를 포함합니다.
+	외부 클래스인 Button을 직렬화 할 수 없기 때문에, Button에 대한 참조가 ButtonState의 직렬화를 방해하게 됩니다.
+
+그래서 자바에서는 이러한 문제를 내부 클래스를 static으로 선언하는 것으로 해결합니다.
+	-> 외부 클래스에 대한 암묵적인 참조가 사라집니다.
+
+```java
+	public static class ButtonState implements State{ }
+```
+
+**코틀린**
+코틀린에서는 내부에 정의된 클래스 앞에 아무런 변경자가 붙어있지 않으면 자바의 중첩클래스와 같은 기능을 합니다.
+
+외부 클래스에 대한 참조를 포함하고싶고, 자바의 이너클래스와 같은 기능을 하고싶다면 클래스 앞에 inner변경자를 붙이면 됩니다.
+
+```java
+class Button : View {
+			override fun getCurrentState(): State = ButtonState()
+			override fun restoreState(state: State){...}
+			inner class ButtonState : State {...} // 내부 클래스
+		}
+```
+
+내부 클래스에서 외부 클래스의 참조에 접근하려면
+```java
+class Outer {
+	private val a: Int = 1
+	fun funName(): Int {...}
+		inner class Inner {
+			val a = this@Outer // Outer's this
+			val b = this@Inner // Inner's this
+			val c = this@Outer.a // 외부 클래스의 필드에 접근
+			val d = this@Outer.funName() // 외부 클래스의 메소드에 접근
+			fun getOuterReference(): Outer = this@Outer
+		}
+	}
+
+	>> val demo = Outer().Innter().getOuterFeference()
 ```
