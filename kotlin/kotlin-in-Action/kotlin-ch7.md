@@ -145,3 +145,53 @@ _코틀린에서 지원하는 단항 연산자_
 | --a, a-- | dec        |
 
 전위와 후위 연산을 처리하기 위해 별다른 처리를 해주지 않아도 제대로 작동한다.
+
+## 7.2 비교 연산자 오버로딩
+> 모든 객체에 대해 비교 연산을 수행할 수 있다.
+
+자바에서는 equals, compareTo를 호출해야 했지만, 코틀린에서는 '==' 연산자를 직접 사용할 수 있다.
+코드가 간결해진다.
+
+### 7.2.1 동등성 연산자 : equals
+
+* '=='와 '!=' 연산자는 컴파일시 equals가 호출된다.
+	* 내부에서 인자가 null인지 판단하므로 nullable값에도 적용할 수 있다.
+	* a==b라면 a가 null이 아닐 경우에만 a.equals(b)를 호출한다.
+	* a== b -> a?.equlas(b) ?: (b == null) //a가 null인경우 b도 null이면 true
+* '===' 연산자는 오버로딩할 수 없다.
+
+* equals는 Any에 정의된 메소드이므로 override가 필요하다.
+	* Any의 equals는 operator가 붙어있어, 오버라이딩 하는 메소드에는 operator를 붙이지 않아도 적용된다.
+	* ==오버라이딩된 메소드가 확장함수보다 우선순위가 높기 때문에, equals는 확장함수로 정의할 수 없다.==
+
+### 7.2.2 순서 연산자 : compareTo
+> 자바에서 정렬이나 값을 비교해야 하는 클래스는 Comparable 인터페이스를 구현했다.
+Comparable의 compareTo 메소드는 객체의 크기를 비교해 정수로 나타내준다.
+
+* 코틀린도 자바와 같은 Comparable 인터페이스를 제공한다.
+	* compareTo 메소드를 호출하는 관례를 제공한다.
+	* <, >, <=, >= 연산자는 compareTo 호출로 컴파일 된다.
+	* compareTO의 반환값은 Int 타입이다.
+	* p1 < p2 -> p1.compareTo(p2) < 0
+
+```java
+	class Person(val firstName: String, val lastName: String) : Comparable<Person> {
+		override fun compareTo(other: Person): Int {
+			return compareValuesBy(this, other,
+				Person::lastName, Person::firstName) // lastName이 우선순위
+		}
+	}
+
+	val p1 = Person("Alice", "Smith")
+	val p2 = Person("Bob", "Johnson")
+	>>> println(p1 < p2)
+	false
+```
+
+compareValuesBy 함수는 두 객체와 여러 비교 함수를 인자로 받는다.
+첫 번째 비교 함수에 두 객체가 같지 않다는 결과(0이 아닌 값)이 나오면 결과 값을 반환하고 ,
+두 객체가 같다는 결과가 나오면 두번째 함수를 호출한다.
+
+_필드를 직접 비교하면 코드는 복잡해지지만 속도는 빨라진다._
+
+Comparalbe을 구현하는 모든 자바 클래스를 코틀린에서는 간결한 연산자 구문으로 비교할 수 있다.
