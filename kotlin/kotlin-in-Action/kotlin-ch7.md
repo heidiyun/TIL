@@ -459,7 +459,64 @@ PropertyChangeSupport 인스턴스를 저장하고 프로퍼티 변경 시 인�
 	}
 
 	class Person(val name: String, age: Int, salary: Int): PropertyChangeAware() {
+		var age: Int = age
+		set(newValue) {
+			val oldValue = field
+			field = newValue
+			changeSupport.firePropertyChange(
+				"age", oldValue, newValue)
+		}
 
+		var salary: Int = salary
+		set(newValue) {
+			val oldValue = field
+			fiedl = newValue
+			changeSupprot.firePropertyChnage(
+				"salary", oldValue, newValue)
+		}
+	}
+```
+```java
+	/* 도우미 클래스 */
+	class ObservableProperty(
+		val propName: String, var propValue: Int,
+		val changeSupport: PropertyChangeSupport) {
+		fun getValue(): Int = propValue
+		fun setValue(newValue: Int) {
+			val oldValue = propValue
+			propValue = newValue
+			changeSupport.firePropertyChnage(propName, oldValue, newValue)
+		}
+	}
+
+	->
+
+	class ObservableProperty(
+		val propName: String, var propValue: Int,
+		val changeSupport: PropertyChangeSupport) {
+
+		operator fun getValue(p: Person, prop: Kproperty<*>): Int = propValue
+		operator fun setValue(p: Person, prop: Kproperty<*>, newValue: Int) {
+			val oldValue = propValue
+			propValue = newValue
+			changeSupport.firePropertyChnage(prop.name, oldValue, newValue)
+		}
+	}
+	// getValue, setValue에도 operator가 붙는다.
+	// getValue와 setValue는 프로퍼티가 포함된 객체와 프로퍼티를 표현하는 객체를 파라미터로 받는다.
+	// KProperty 인자를 통해 프로퍼티 이름을 전달받으르모 주 생성자에서는 name프로퍼티를 없앤다.
+
+
+	class Person(val name: String, age: Int, salary: Int): PropertyChangeAware() {
+		val _age = ObservableProperty("age", age, changeSupport)
+		var age: Int
+			get() = _age.getValue()
+			set(value) { _age.setValue(value) }
+
+		val _salary = ObservableProperty("salary", salary, changeSupport)
+		var salary: Int
+			get() = _salary.getValue()
+			set(value) { _salary.setValue(value) }
 	}
 ```
 
