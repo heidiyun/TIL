@@ -22,6 +22,7 @@ _규칙_
 
 _주의할 점_
 교환법칙이 성립하지 않는다.
+
 ```java
 	data class Point(val x: Int, val y: Int)
 

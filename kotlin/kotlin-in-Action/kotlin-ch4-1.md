@@ -257,3 +257,166 @@ _규칙_
 
 sealed 클래스는 자동적으로 open이다.
 
+## 4.2 뻔하지 않은 생성자와 프로퍼티를 갖는 클래스 선언
+> 코틀린은 주 생성자와 부 생성자를 구분한다.
+
+### 4.2.1. 클래스 초기화 : 주 새성자와 초기화 블록
+* 클래스 이름 뒤에 오는 괄호로 둘러싸인 코드가 주 생성자이다.
+```java
+ class User(val name: String, val age: Int)
+```
+
+* construct 키워드는 주 생성자나 부 생성자 정의를 시작할 때 사용한다.
+	*  주 생성자는 별도의 코드를 포함할 수 없으므로 init 블록이 필요하다.
+* init 키워드는 초기화 블록을 시작한다.  (클래스가 인스턴스화 될 때 실행될 초기화 코드가 들어감)
+	* 초기화 블록은 주 생성자와 함께 사용된다.
+```java
+	 class User(_nickname: String) {
+		 val nickname: String
+	init {
+		nickname - _nickname
+	}
+
+	or
+	
+	class User(nickname: String) {
+		val nickname: String
+	
+		init {
+			this.nickname = nickname
+		}
+	}
+```
+
+* nickname프로퍼티를 초기화하는 코드를 nickname 프로퍼티 선언에 포함시킬 수 있어서 초기화 코드를 초기화 블록에 넣을 필요가 없다. 
+*  주 생성자 앞에는 애노테이션이나 가시성 변경자가 없다면 construct를 생략해도 된다.
+
+```java
+	class User(_nickname: String) {
+		val nickname = _nickname
+	}
+```
+* 프로퍼티를 초기화 하는 식이나, 초기화 블록 안에서만 주 생성자의 파라미터를 참조할 수 있다.
+
+```java
+	class User(val nickname: String)
+	
+	// 프로퍼티의 디폴트 값 정의 가능
+	class User(val nickname: String = "")
+	
+```
+* 기반 클래스가 있다면 주 생성자에서 기반 클래스의 생성자를 호출해야 할 필요가 있다.
+```java
+	open class User(val nickname: String)
+
+	class TwitterUser(nickname: String) : User(nickname)
+```
+
+* 클래스를 정의할 때 별도의 생성자를 정의하지 않으면 인자가 없는 디폴트 생성자를 만들어준다.
+	* 생성자가 없는 클래스의 하위클래스는 명시적으로 부모 클래스의 생성자를 호출해야 한다.
+```java
+		open class Button
+		class RadioButton: Button()
+		// 클래스를 상속할 때는 꼭 클래스 이름뒤에 괄호를 붙여야 한다.
+```
+
+* 클래스의 인스턴스화를 막고 싶다면 모든 생성자를 private로 만들면 된다.
+```java
+ class User private constructor() {...}
+```
+
+### 4.2.2 부 생성자
+> 자바의 생성자 오버로딩은 코틀린에서 디폴트 파라미터 값과 이름 붙은 인자 문법을 사용해 해결할 수 있다.
+
+```java
+	open class View {
+		constructor(ctx: Context) { ... }
+		constructor(cts: Context, attr: AttributeSet) { ... }
+	}
+class MyButton : View {
+	constructor(ctx: Context) : this(ctx, MY_STYLE) { ... }
+	// 생성을 같은 클래스의 다른 생성자에게 위임한다.
+	constructor(ctx: Context, attr: AttributeSet): super(ctx, attr) { ... }
+	// 위임받은 생성자는 부모 클래스의 생성자를 호출한다.
+}
+```
+* 클래스에 주 생성자가 없다면 모든 부 생성자는 반드시 부모 클래스의 생성자를 호출하거나,
+   다른 생성자에게 생성을 위임해야 한다.
+
+* 부 생성자가 필요한 이유는 자바와의 상호운용성이다.
+
+### 4.2.3 인터페이스에 선언된 프로퍼티 구현
+> 코틀린에서는 인터페이스에 추상 프로퍼티 선언을 넣을 수 있다.
+ 인터페이스는 상태를 저장할 수 없으므로 backing field를 참조할 수 없다.
+
+```java
+	interface User {
+		val nicknmae: String
+	}
+```
+* 인터페이스에 있는 프로퍼티는 backing field와 getter 등이 제공되지 않는다.
+* 인터페이스에 선언된 프로퍼티는 하위 클래스에서 구현해야 한다.
+```java
+	interface User {  
+	    val nickname: String  
+	}  
+  
+	class PrivateUser (override val nickname: String) : User   
+		// 인터페이스의 프로퍼티를 구현할 경우에는 oveeride 키워드를 꼭 붙인다.
+		
+	class SubscribingUser(val email: String) : User {  
+	    override  val nickname: String  
+	        get() = email.substringBefore('@')  
+	}  
+	  // 커스템 게터로 프로퍼티를 구현하여 backing field는 없다.
+	  
+	class FaceboockUser(val accountId: Int) : User {  
+	    override val nickname = "Yun"  
+	}
+	// 초기화 식을 통해 구현했다.
+```
+* getter/setter를 가지는 프로퍼티를 선언할 수 있다.
+```java
+	interface User {
+		val email: String // 구현 클래스에서 overriding이 필수.
+		val nickname: String
+			get() = email.substringBefore('@')
+				// 구현 클래스에서 overriding이 안해도 됨.
+				// backing field는 없고, 매번 결과를 계산해 반환해준다.
+	}
+```
+
+### 4.2.4 게터와 세터에서 뒷받침하는 필드에 접근
+> backing field가 있고, getter/setter에 접근할 때마다 정해진 로직을 실행하는 프로퍼티를 정의해보자.
+
+```java
+	class User(val nameL String) {
+		var address: String = "unspecified"
+			set(value: String) {
+				println(""" Address was changed for $name:
+				"$field" -> "$value".""".trimIndent())
+				field = value
+			}
+	}
+
+	>> val user = User("Heidi")
+	>> user.address = "happydong 47" // setter를 호출한다.
+
+```
+* getter에서는 field값을 읽을 수만 있고, setter에서는 field의 값을 읽거나 쓸 수 있다.
+
+### 4.2.5 접근자의 가시성 변경
+* getter/setter의 가기성은 기본적으로 프로퍼티의 가시성과 같다.
+  getter/setter앞에 가시성 변경자를 추가하여 가시성을 변경할 수 있다.
+
+```java
+	class LengthCounter {
+		var counter: Int = 0
+			private set // 클래스 외부에서 counter의 setter에 접근할 수 없다.
+
+			fun addWord(word: String) {
+				counter += word.length // 해당 함수를 통해 word를 add할 경우에만 counter를 변경할 수 있도록 하였다.
+			}
+
+		}
+```
