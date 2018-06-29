@@ -286,3 +286,192 @@ _코틀린과 자바를 혼합한 클래스계층 선언_
 
 * 코틀린 컴파일러는 널이 될 수 없는 타입으로 선언한 모든 파라미터에 대해 널이 아님을 검사하는 던언문을 만든다.
 	* 자바 코드가 해당 메소드에게 null을 넘기면 단언문에 의해 예외가 발생한다.
+
+## 6.2 코틀린의 원시 타입
+> 코틀린은 원시 타입과 래퍼 타입을 구분하지 않는다.
+ㅏ
+### 6.2.1 원시 타입 : Int, Boolean
+코틀린은 항상 같은 타입을 사용한다.
+```java
+	val i: Int = 1
+	val list: List<Int> = listOf(1, 2, 3)
+```
+
+원시 타입의 값에 대해 메소드를 호출할 수 있다.
+```java
+	fun showProgress(progress: Int) {
+		val percent = progress.coerceIn(0, 100)
+	}
+```
+
+실행 시점에서 숫자 타입은 가능한 가장 효츌적인 방식으로 표현된다.
+변수, 프러퍼티, 파라미터 등에서 Int타입은 자바의 int타입으로 컴파일 되고,
+컬렉션 등에서 Int타입은 자바의 java.lang.Integer 객체로 컴파일 된다.
+
+**Int와 코틀린 타입은 nullable이 될 수 없어서 자바 원시 타입으로 컴파일 할 수 있고, 자바의 원시 타입 또한 null이 들어갈 수 없으므로 코틀린에서 null이 될 수 없는 타입으로 취급할 수 있다.**
+
+### 6.2.2 널이 될 수 있는 원시 타입: Int?, Boolean? 등
+
+코틀린에서 null이 될 수 있는 원시 타입은 자바의 래퍼 타입으로 컴파일 된다.
+
+클래스의 타입 인자로 원시 타입을 넘기면 코틀린은 그 타입에 대한 박스 타입을 사용한다.(래퍼 타입)
+```java
+	val listOfInts = listOf(1, 2, 3)
+	// 1, 2, 3은 java.lang.Integer 타입으로 컴파일 된다.
+```
+
+### 6.2.3 숫자 변환
+> 코틀린은 숫자 타입을 자동 변환 해주지 않는다.
+
+```java
+	val i = 1
+	val l: Long = i // 컴파일 오류 type mismatch
+
+	/* 정상 작동 코드 */
+	val i = 1
+	val l: Long = i.toLong()
+	// 직접 변환 메소드를 호출해야 한다.
+```
+* 코틀린은 모든 원시 타입 (Boolean 제외)에 대한 변환 함수를 제공한다.
+
+_원시 타입 리터럴_
+1. Long : 123L
+2. Double : 0.12, 2.0
+3. Float : 12.4f, 234F
+4. 16진 리터럴 : 0xCAFE, 0XbcdL
+5. 2진 리터럴 : 0b00000101, 0B00000101
+
+코틀린 1.1 부터 숫자 리터럴 중간에 밑줄을 넣을 수 있다.
+(1_234, 1_0000_0000)
+
+* 숫자 리터럴을 사용할 때는 보통 변환 함수를 호출할 필요가 없다.
+* 숫자 리터럴을 타입이 알려진 변수에 대입하거나 함수에게 인자로 넘기면 컴파일러가 자동 변환을 지원해준다.
+* 산술 연산자는 대부분의 타입을 받아들일 수 있게 오버로드되어 있다.
+```java
+	fun foo(l: Long) = println(l)
+
+	>>> val b: Byte = 1 
+	>>> val l = b + 1L // 산술 연산자 오버로드
+	>>> foo(42) // 컴파일러는 42를 Long값으로 해석.
+
+```
+
+### 6.2.4 Any, Any? : 최상위 타입
+> 코틀린에서 Any타입이 모든 널이 될 수 없는 타입의 최상위 타입이다.
+
+자바에서 원시 타입이 Object의 하위 타입이 되려면 래퍼 타입으로 변환해야 했는데, 코틀린에서는 Any가 모든 원시 타입의 부모 타입이다.
+
+* 코틀린에서 원시 타입 값을 Any타입의 변수에 대입하면 자동으로 래퍼 타입으로 변환해준다.
+```java
+	val answer: Any = 42
+```
+* Any 타입은 java.lang.Object에 대응한다.
+	* 자바의 Object 타입은 코틀린의 Any!로 취급된다.
+
+* java.lang.Object에 있는 다른 메소드는 Any에서 사용할 수 없다.
+사용하려면, Any를 java.lang.Object 타입으로 캐스팅해야 한다.
+
+### 6.2.5 Unit 타입 :  코틀린의 void
+> 코틀린의 Unit 타입은 자바 void와 같은 기능을 한다.
+
+```java
+	fun f(): Unit { ... }
+	fun f() { ... } // 위의 함수와 같다.
+```
+
+코틀린 함수의 반환 타입이 Unit이고 그 함수가 제네릭 함수를 오버라이드하지 않는다면 내부에서 자바 void 함수로 컴파일된다.
+
+_void와 다른점_
+1. Unit을 타입 인자로 쓸 수 있다.
+2. Unit타입의 함수는 Unit 값을 암묵적으로 반환한다.
+-> 제네릭 파라미터를 반환하는 함수를 오버라이드하면서 반환 타입으로 Unit을 쓸 때 유용한 특징
+
+```java
+	interface Processor<T> {
+		fun process(): T
+	}
+
+	class NoResultProcessor: Processor<Unit> {
+		override fun process() { // Unit을 반환하지만 타입을 지정할 필요 x
+			... 
+		}
+	}
+```
+
+### 6.2.6 Nothing 타입 : 함수가 정상적으로 끝나지 않는다.
+> 무한 루프를 도는 함수, 예외를 던지는 함수.
+
+```java
+	fun fail(message: String): Nothing {
+		throw IllegalStateException(message)
+	}
+	>> fail("Error occurred")
+	java.lang.IllegalStateException: Error occurred
+```
+* Nothing 타입은 아무 값도 포함하지 않는다.
+	* 함수의 반환 타입이나 반환 타입으로 쓰일 타입 파라미터로만 쓸 수 있다.
+	* Nothing 타입의 변수를 선언해도 아무 값도 저장할 수 없다.
+```java
+	val address = company.address ?: fail("No address")
+	// 전제 조건을 검사할 떄 유용하다.
+```
+
+## 6.3 컬렉션과 배열
+
+### 6.3.1 널 가능성과 컬렉션
+
+* List<Int?> 
+	* List 전체는 null이 될 수 없으나 각 원소의 값은 null이 될 수 있다.
+* List<Int>?
+	* List 전체는 null이 될 수 있으나 각 원소의 값은 null이 될 수 없다.
+* List<Int?>?
+	* List 전체도 null이 될 수 있고, 각 원소의 값도 null이 될 수 있다.
+
+### 6.3.2 읽기 전용과 변경 가능한 컬렉션
+> 코틀린은 컬렉션 안의 데이터에 접근하는 인터페이스와 컬렉션 안의 데이터를 변경하는 인터페이스를 분리했다.
+
+* kotliln.collections.Collection 인터페이스를 사용하면 데이터를 읽는 연산을 수행할 수 있다.  (수정 불가능)
+* kotlin.collections.MutableCollection 인터페이스를 사용하면 컬렉션의 데이터를 수정할 수 있다.
+
+읽기 전용 컬렉션이어도 그에 대한 참조는 mutable할 수 있기 때문에 항상 스레드 안전하지 않다.
+
+### 6.3.3 코틀린 컬렉션과 자바
+> 코틀린에서 읽기전용 컬렉션이라도 자바 코드에서는 컬렉션 객체의 내용을 변경할 수 있다.
+
+### 6.3.4 컬렉션을 플랫폼 타입으로 다루기
+> 자바에서 선언한 컬렉션 타입의 변수를 코틀린에서는 플랫폼 타입으로 본다.
+
+컬렉션 타입이 시그니처에 들어간 자바 메소드 구현을 오버라이드할 경우 널 가능성에 대해서 고려해야 한다.
+
+### 6.3.5 객체의 배여로가 원시 타입의 배열
+
+```java
+	fun main(args: Array<String>) {
+		for (i in args.indices) {
+			println(args[i])
+		}
+	}
+```
+
+**배열 만드는 법**
+1. arrayOf 함수에 원소를 넘긴다.
+2. arrayOfNulls 함수에 정수 값을 인자로 넘기면 모든 원소가 null이고, 인자로 넘긴 값과 크기가 같은 배열을 생성한다. 
+(원소 타입이 nuallable 해야 한다.)
+3. Array 생성자는 배열 크기과 람다를 인자로 받아서 각 배열 원소를 초기화 할 수 있다.
+```java
+	val letters = Array<String>(26) { i -> ('a' + i).toString }
+```
+4. 컬렉션을 toTypedArray 메소드를 사용하여 배열로 바꿀 수 있다.
+
+
+* 배열 타입의 타입 인자도 항상 객체 타입이 된다. 
+Array<Int>는 java.lang.Integer[]이 된다.
+
+* 박싱하지 않은 원시 타입의 배열이 필요하다면, IntArray(int[]), ByteArray (byte[]) 등을 사용하면 된다.
+
+* 박싱된 값이 들어있는 컬렉션이나 배열이 있다면 toIntArray등의 함수를 이용하자.
+
+* 컬렉션에 사용할 수 있는 모든 확장 함수를 배열에도 제공한다.
+
+
+
