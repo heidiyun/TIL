@@ -8,6 +8,9 @@
 오랜 시간 동안 수행하는 작업을 메인 스레드가 하게되면 다른 UI가 업데이트 되지 않는다. 이를 방지하기위해 비동기 처리를 해야한다. 
 동기 처리를 하게 되면 android.os.NetworkOnMainThreadException!!이 발생한다.
 
+* Http Protocol
+POST/GET/DELETE/PUT..
+
 1. 인터넷에 대한 권한을 받아와야 한다.
 [AndroidManifest.xml]
 ```
@@ -16,7 +19,22 @@
 
 http://mailmail.tistory.com/13
 
+2. HttpLoggingInterceptor가 필요하다.
+요청 및 응답 정보를 기록하는(로그 기능) 것.
+```java
+	val loggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.BODY
+    // 어느 정보만을 볼 것인지.
+}
+```
 
+3. OkHttpClient가 필요하다.
+서버와 통신할 Client로, HttpLoggingInterceptor를 추가해주어야 한다.
+```java
+	val httpClient: OkHttpClient = OkHttpClient.Builder().apply {
+    	addInterceptor(loggingInterceptor)
+	}.build()
+```
 
 # android manifest 
 
