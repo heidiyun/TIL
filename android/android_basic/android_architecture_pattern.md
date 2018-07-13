@@ -1,7 +1,7 @@
 # Android Architecture Pattern
 > 화면에 보여주는 로직과 실제 데이터가 처리 되는 로직을 분리.
 
-=MVC(Model - View - Controller)=
+==MVC(Model - View - Controller)==
 
 **정의**
 1. Model : 프로그램에서 사용되는 실제 데이터 및 데이터 조작 로직을 처리하는 부분
@@ -28,7 +28,7 @@
 3. 많은 코드가 컨트롤러로 모이게 되면 컨트롤러의 크기가 커지고 문제 발생 확률이 높아진다.
 4. View와 Model이 서로 의존적이다.
 
-=MVP (Model - View - Presenter)=
+==MVP (Model - View - Presenter)==
 
 **정의**
 Model과 View의 역할은 같다.
@@ -50,7 +50,7 @@ Presenter : View에서 요청한 정보를 Model로 부터 가공해서 View로 
 **단점**
 View와 Presenter가 강한 의존성을 가지고 된다.
 
-=MVVM(Model + View + ViewModel)=
+==MVVM(Model + View + ViewModel)==
 
 **정의**
 VieModel : View를 표현하기 위해 만들어진 View를 위한 Model

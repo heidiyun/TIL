@@ -77,9 +77,15 @@ Adapter만들기
 			val inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)
 		}	
 
-		override fun getCount(): Int = data.size()
-		override fun getItem(position: Int): String = data.get(position).getName()
-		override fun getItemId(position: Int): Long = position
+		override fun getCount(): Int {
+		 	return data.size()
+		 }
+		override fun getItem(position: Int): String { 
+			return data.get(position).getName()
+		}
+		override fun getItemId(position: Int): Long {
+			return position
+		}
 		override fun getView(position: Int, convertView: View, parent: ViewGroup) {
 			if (convertView==null) = convertView = inflater.inflate(layout, parent, flase)
 
