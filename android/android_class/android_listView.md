@@ -161,3 +161,33 @@ activity_search.xml, item_repo를 inflate 할 것이다.
         })
     }
 ```
+
+**문제점**
+1. View Holder Pattern을 사용하지 않아도 동작한다.
+2. Item Layout의 형태를 변경할 수 없다.
+3. 타입 안정성이 없다.
+
+
+> View Holder Pattern
+데이터의 개수 만큼 뷰를 생성하는 것이 아니라, 화면에 보이는 만큼만 가지고 있으면 된다. 
+뷰가 화면에 사라질 때마다, 재사용한다.
+
+* 4번의 getView 메소드를 View가 재사용가능한 형태로 바꿔보기.
+    => convertView : 재사용 가능한 View
+       converView가 null이면 새로운 View를 생성한다.
+```java
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val item = items[position]
+
+            return if (convertView == null) {
+                val view = LayoutInflater.form(context).inflate(R.layout.item_repo, null)
+                view.repoNameText.text = item.fullName
+                view.repoOwnerText.text = item.owner.login
+                view
+            } else {
+                convertView.repoNmaeText.text = item.fullName
+                convertView.repoOwnerText.text = item.owner.login
+                convertView
+            }
+        }
+```
