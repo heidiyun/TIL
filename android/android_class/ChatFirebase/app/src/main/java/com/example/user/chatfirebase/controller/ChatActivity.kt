@@ -1,4 +1,4 @@
-package com.example.user.chatfirebase
+package com.example.user.chatfirebase.controller
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.example.user.chatfirebase.R
+import com.example.user.chatfirebase.model.ChatModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,42 +26,6 @@ data class ChatItem(val name: String, val body: String) {
     }
 }
 
-class ChatModel {
-    //    var chatItems: List<ChatItem> = emptyList()
-    var chatItems: List<ChatItem> by Delegates.observable(emptyList()) { _, _, new ->
-        onchangeChatItems?.let {
-            it(new)
-        }
-    }
-
-    private val database = FirebaseDatabase.getInstance()
-    private val chatRef = database.getReference("chat-tems")
-    var onchangeChatItems: ((List<ChatItem>) -> Unit)? = null
-
-    init {
-        chatRef.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                chatItems = snapshot.children.map {
-                    val name = it.child("name").value as String
-                    val body = it.child("body").value as String
-                    ChatItem(name, body)
-                }
-            }
-
-        })
-    }
-
-    fun postChat(item: ChatItem) {
-
-        val newRef = chatRef.push()
-//        ref.setValue("hello")// 그냥 덮어쓴다.
-        newRef.setValue(item.toJson())
-    }
-}
 
 class ChatViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context)
@@ -71,6 +37,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatViewHolder>() {
 
         notifyDataSetChanged()
     }
+    // 첫번째 인자는 KProperty(reflection)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         return ChatViewHolder(parent)
@@ -95,20 +62,24 @@ class ChatAdapter : RecyclerView.Adapter<ChatViewHolder>() {
 //controller
 class ChatActivity : AppCompatActivity() {
     private val chatModel = ChatModel()
-    lateinit var adapter: ChatAdapter
+    private lateinit var adapter: ChatAdapter // recycler view adapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
         adapter = ChatAdapter()
-//        adapter.items = chatModel.chatItems
-        chatModel.onchangeChatItems = {
-            adapter.items = it
-        }
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+        // recycler view 에 adapter 등록, layoutManager 설정.
+
+//        adapter.items = chatModel.chatItems
+        chatModel.onChangeChatItems = {
+            adapter.items = it
+        }
+
+
 
         sendButton.setOnClickListener {
             //            chatModel.postChat(ChatItem(name = "yun", body = "hello"))
@@ -117,14 +88,16 @@ class ChatActivity : AppCompatActivity() {
                 val body = editText.text
 
                 if (body.isNotBlank()) {
-                    chatModel.postChat(ChatItem(name ?: "unnamed", body.toString()))
+                    chatModel.postChat(ChatItem(name
+                            ?: "unnamed", body.toString()))
                     recyclerView.smoothScrollToPosition(recyclerView.adapter.itemCount)
                     editText.text.clear()
 
                 }
 
             }
-            editText.text.clear()
         }
     }
 }
+
+// _ (파라미터) :쓰지는 않지만 경고를 막기위한것.
