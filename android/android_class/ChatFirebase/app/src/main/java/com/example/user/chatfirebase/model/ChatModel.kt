@@ -5,6 +5,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import org.joda.time.LocalDateTime
+import org.joda.time.format.DateTimeFormat
+import java.lang.Exception
 import kotlin.properties.Delegates
 
 class ChatModel {
@@ -31,8 +35,15 @@ class ChatModel {
             override fun onDataChange(snapshot: DataSnapshot) {
                 chatItems = snapshot.children.map {
                     val name = it.child("name").value as String
-                    val body = it.child("body").value as String
-                    ChatItem(name, body)
+                    val body = it.child("body").value as? String
+                    val image = it.child("image").value as? String
+                    if (body != null) {
+                        ChatItem.chat(name, body)
+                    } else {
+                        ChatItem.image(name, image!!)
+                        // body와 달리 image에 대한 null 체크를 else로 묶어서 image!!를 해주어야 한다.
+                    }
+
                 }
             }
 
@@ -47,5 +58,52 @@ class ChatModel {
 //        ref.setValue("hello")
 //        그냥 덮어쓴다. (ref 가 새로 추가되지 않고)
         newRef.setValue(item.toJson())
+    }
+
+
+    private fun generateImageName(): String {
+        val now = LocalDateTime.now()
+        val formatter = DateTimeFormat.forPattern("yy_MM_dd_HH_mm_ss")
+        return "firsebase_chat_${now.toString(formatter)}.jpeg"
+    }
+
+    //Task라이브러리가 몇개의 Thread를 만들지 결정한다.
+    // Task와 Main Thread의 Context는 다르다.
+    fun postImage(data: ByteArray,
+                  onFailure: ((Exception) -> Unit)? = null,
+                  onSuccess: ((String) -> Unit)? = null) {
+        val storage = FirebaseStorage.getInstance()
+        val imageRef = storage.getReference("images")
+        val uploadRef = imageRef.child(generateImageName())
+//        파일명에서 ref 를 뽑아내야 한다.
+        // 내가 설정한 이름으로 ref가 생성된다.
+
+        val uploadTask = uploadRef.putBytes(data)
+        with(uploadTask) {
+            addOnFailureListener {
+                onFailure?.invoke(it)
+            }
+
+            addOnSuccessListener {
+                //                it.storage.downloadUrl
+
+                it.storage.downloadUrl?.let {
+                    task ->
+                    task.addOnSuccessListener { uri ->
+                        onSuccess?.invoke(uri.toString())
+                    }
+
+                }
+
+//                it.metadata?.reference?.downloadUrl?.let { task ->
+//                    task.addOnSuccessListener { uri ->
+//                        onSuccess?.invoke(uri.toString())
+//                    }
+//                }
+            }
+        }
+        // 언제 성공했는지 시점을 알 수 없으므로, 콜백을 만들어야 한다.
+
+
     }
 }
