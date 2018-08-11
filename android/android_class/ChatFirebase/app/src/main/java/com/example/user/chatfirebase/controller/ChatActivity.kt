@@ -77,6 +77,10 @@ class ChatActivity : AppCompatActivity() {
 //        adapter.items = chatModel.chatItems
         chatModel.onChangeChatItems = {
             adapter.items = it
+//            recyclerView.scrollToPosition(it.size - 1)
+            recyclerView.smoothScrollToPosition(recyclerView.adapter.itemCount - 1)
+//            recyclerView.betterSmoothScrollToPosition(it.size - 1)
+
         }
 
 
@@ -90,7 +94,7 @@ class ChatActivity : AppCompatActivity() {
                 if (body.isNotBlank()) {
                     chatModel.postChat(ChatItem(name
                             ?: "unnamed", body.toString()))
-                    recyclerView.smoothScrollToPosition(recyclerView.adapter.itemCount)
+//                    recyclerView.smoothScrollToPosition(recyclerView.adapter.itemCount)
                     editText.text.clear()
 
                 }
@@ -99,5 +103,30 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 }
+
+fun RecyclerView.betterSmoothScrollToPosition(targetItem: Int) {
+    layoutManager?.apply {
+        val maxScroll = 10
+        when (this) {
+            is LinearLayoutManager -> {
+                val topItem = findFirstVisibleItemPosition()
+                val distance = topItem - targetItem
+                val anchorItem = when {
+                    distance > maxScroll -> targetItem + maxScroll
+                    distance < -maxScroll -> targetItem - maxScroll
+                    else -> topItem
+                }
+                if (anchorItem != topItem) scrollToPosition(anchorItem)
+                post {
+                    smoothScrollToPosition(targetItem)
+                }
+            }
+            else -> smoothScrollToPosition(targetItem)
+        }
+    }
+}
+// smoothScrollToPosition 은 가장 아래 position 으로 가기위해서 위의 리스트를 모두 스크롤 해야 하지만,
+// betterSmoothScrollToPosition 은 maxScroll 까지의 개수만 스크롤하고 바로 최근의 리스트로 위치를 이동한다.
+
 
 // _ (파라미터) :쓰지는 않지만 경고를 막기위한것.
