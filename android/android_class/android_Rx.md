@@ -1,21 +1,21 @@
 # Rx
 Rx(Reactive Extension)
-	-> Functional Programming
-	-> Declarative Programming 
-		(로직을 통해서 작성하는 것이 아니라, 데이터에 쿼리를 전해주는것)
-	-> Data Binding
+-> Functional Programming
+-> Declarative Programming 
+	(로직을 통해서 작성하는 것이 아니라, 데이터에 쿼리를 전해주는것)
+-> Data Binding
 
 RxJava/Kotlin
-	: Callback 방식과는 달리 발생하는 이벤트를 이벤트 스트림에 전달하고,
-	  이벤트 스트림을 관찰하다가 원하는 이벤트가 감지되면 이에 따른 동작을 수행하는 패턴을 사용한다.
+: Callback 방식과는 달리 발생하는 이벤트를 이벤트 스트림에 전달하고,
+이벤트 스트림을 관찰하다가 원하는 이벤트가 감지되면 이에 따른 동작을 수행하는 패턴을 사용한다.
 
 * 장점 : 비동기 이벤트를 컬렉션을 처리하는 개념으로 일반화해서 처리할 수 있다.
 
 	* 비동기
-		: 결과의 완료시점을 알 수 없다.
-		   -> Callback을 통해 처리한다.
-		   -> Callback이 무수히 많아지면 흐름을 제어하기 힘든 Callback Hell이 만들어진다.
-		   		-> 코드의 가독성이 현저하게 떨어지게 된다.
+	: 결과의 완료시점을 알 수 없다.
+	-> Callback을 통해 처리한다.
+	-> Callback이 무수히 많아지면 흐름을 제어하기 힘든 Callback Hell이 만들어진다.
+	-> 코드의 가독성이 현저하게 떨어지게 된다.
 
 * 요소
 	1. Observable
