@@ -23,6 +23,7 @@
         return true
     }
 ```
+SearchView에서 동작하는 메소드는 apply안에서 동작한다.
 
 3. java/ SearchActivity.kt 추가하기.
 ```java
