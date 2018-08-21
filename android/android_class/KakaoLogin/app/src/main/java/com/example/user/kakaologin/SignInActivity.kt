@@ -15,14 +15,45 @@ import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.MeV2ResponseCallback
 import com.kakao.usermgmt.response.MeV2Response
 import com.kakao.util.exception.KakaoException
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLoginHandler
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import java.security.MessageDigest
 
 class SignInActivity : AppCompatActivity() {
 
+    companion object {
+        const val OAUTH_CLIENT_ID = "CJAOs2c8Ic9yafFnKx_U"
+        const val OAUTH_CLIENT_SECRET = "LAaazdadN5"
+        const val OAUTH_CLIENT_NAME = "Login"
+    }
+
+    private val mOAuthLoginHandler: OAuthLoginHandler = object : OAuthLoginHandler() {
+        override fun run(p0: Boolean) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
+
+
+
+        val oAuthLoginModule = OAuthLogin.getInstance()
+        oAuthLoginModule.init(
+                this,
+                OAUTH_CLIENT_ID,
+                OAUTH_CLIENT_SECRET,
+                OAUTH_CLIENT_NAME
+        )
+
+        naverLoginButton.setOAuthLoginHandler(object: OAuthLoginHandler() {
+            override fun run(p0: Boolean) {
+
+            }
+        })
 
         val callback = SessionCallback()
         Session.getCurrentSession().addCallback(callback)

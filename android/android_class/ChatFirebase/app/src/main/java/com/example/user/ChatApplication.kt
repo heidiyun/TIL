@@ -11,6 +11,5 @@ class ChatApplication: Application() {
         super.onCreate()
         // 앱이 처음 구동할 때 생성되는 인스턴스
         JodaTimeAndroid.init(this)
-
     }
 }

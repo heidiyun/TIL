@@ -21,6 +21,20 @@
 
     </com.kakao.usermgmt.LoginButton>
 
+    <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
+        android:id="@+id/naverLoginButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+        app:layout_constraintEnd_toEndOf="@+id/loginButton"
+        app:layout_constraintStart_toStartOf="@+id/loginButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.962" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
