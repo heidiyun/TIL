@@ -1,0 +1,45 @@
+long double > double > float   (1순위)
+unsigned long long > long long (2순위)
+unsigned long > long 	       (3순위)
+unsigned int > int 	       (4순위)
+
+높은 형과 낮은 형이 덧셈을 할 경우 높은 형으로 형 변환이 일어난다.
+
+char short ->  integer promotion (int형으로 변환)
+
+int main (void)
+{
+	unsigned long n1 = 10;
+	int n2 = -5;
+	
+	int n3 = n1 + n2;
+}
+
+ => 이 경우 형변환 공식대로 라면, int가 unsigned long으로 형변환 되어야 하지만
+    unsigned는 음수를 표현하지 못한다. 그래서 unsigned long과 같은 우선순위인
+    long으로 n1, n2가 모두 형 변환한다.
+
+대입 연산의 형 변환은 왼편의 피연산자가 기준이 된다.
+
+strlen - 길이
+strcpy - 복사
+strcat - 뒤에 붙여넣는거
+
+비트마스크..?
+또, const
+
+const int * ptr : 포인터 변수가 가르키는 대상에 대한 값의 변경이 허용 x
+		  포인터를 이용한 값의 변경만을 허용하지 않는 것.
+		  포인터가 가르키는 변수는 값을 변경 할 수 있다.
+
+int * const ptr : 포인터 변수에 저장된 값의 변경을 허용 x
+
+volatile : 일시적, 또는 순간적으로 다른 영역으로부터 참조될 수 있으니 코드 최적화를 수행하면 안된다.
+           코드 최적화란, 컴파일러가 성능향상을 위해서 코드를 바꾸어 생각하는 것 
+		=> 이 경우, 값의 변경이 캐쉬 메모리(레지스터)에만 반영되었다가, 뒤늦게 메인 메모리에 반영되기도 한다.
+	   volatile 선언을 한 변수는 참조될 때에도 캐쉬가 아닌 메인 메모리로부터 참조가 이뤄진다.(즉, 값의 변경이 실시간으로 메인 메모리에 반영 된다.)
+
+포인터의 volatile : 레퍼런스의 연산이 최적화되지 않는다.
+
+restrict (포인터에만 선언)
+

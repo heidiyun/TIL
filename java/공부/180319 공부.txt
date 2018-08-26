@@ -1,0 +1,18 @@
+interface(행위) -> 동작에 대한 명세.
+abstract(상태) -> 인스턴스 필드도 같이 챙겨간다.
+
+List<Integer> 1 = new LinkedList<>();
+ -> 교체가능한 유연한 설계를 위해서 , List가 인터페이스
+ArrayList<Integer> l = new ArrayList<>();
+  -> ArrayList에 대해서 강한 결합이 이루어지기 때문에 
+	코드의 수정이 많아진다.
+
+private 생성자 : 객체의 생성을 금지.
+
+람다 : 익명객체에서 생성되던 익명의 클래스가 생성되지 않는다.
+	보일러플레이트가 발생x
+	클로져 시, finalx
+
+어노테이션 : 컴파일이 확인할 수 있어서 실수가 적다.
+
+fucntionalInterface : 오직 한개의 메소드만 가지는 인터페이스.

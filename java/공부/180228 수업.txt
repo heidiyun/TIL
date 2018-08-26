@@ -1,0 +1,4 @@
+framewokr 흐름위에서 동작을 재정의하는 것. 
+shared object
+java 에서 library의 개념은 클래스의 모음
+c 에서 library의 개념은 object파일의 모음

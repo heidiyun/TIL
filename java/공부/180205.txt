@@ -1,0 +1,9 @@
+malloc 실패 처리를 하지 않고 진행할 경우 undefined상황이 나올 수 있다. (정의되지않은...)
+
+./a.out < case_1 : case_1의 입력을 a.out에 대입
+
+strncmp : 패턴매칭 
+
+fgets는 EOF를 만날때 NULL을 반환한다. -> stdin일때 EOF는 ctrl +D
+fgets로 입력받을때, 크기를 벗어난 것은 입력버퍼에 남아있게된다.
+그래서 반복문을 돌릴 때 크기만큼 배열로 받아오게 된다.
