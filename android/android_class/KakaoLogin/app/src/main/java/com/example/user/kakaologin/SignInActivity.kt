@@ -28,12 +28,12 @@ class SignInActivity : AppCompatActivity() {
         const val OAUTH_CLIENT_NAME = "Login"
     }
 
-    private val mOAuthLoginHandler: OAuthLoginHandler = object : OAuthLoginHandler() {
-        override fun run(p0: Boolean) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-    }
+//    private val mOAuthLoginHandler: OAuthLoginHandler = object : OAuthLoginHandler() {
+//        override fun run(p0: Boolean) {
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        }
+//
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +49,11 @@ class SignInActivity : AppCompatActivity() {
                 OAUTH_CLIENT_NAME
         )
 
-        naverLoginButton.setOAuthLoginHandler(object: OAuthLoginHandler() {
-            override fun run(p0: Boolean) {
-
-            }
-        })
+//        naverLoginButton.setOAuthLoginHandler(object: OAuthLoginHandler() {
+//            override fun run(p0: Boolean) {
+//
+//            }
+//        })
 
         val callback = SessionCallback()
         Session.getCurrentSession().addCallback(callback)
