@@ -1,5 +1,6 @@
 package com.example.user.kakaologin
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -18,6 +19,10 @@ import com.kakao.util.exception.KakaoException
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import org.jetbrains.anko.toast
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.security.MessageDigest
 
 class SignInActivity : AppCompatActivity() {
@@ -28,39 +33,78 @@ class SignInActivity : AppCompatActivity() {
         const val OAUTH_CLIENT_NAME = "Login"
     }
 
-//    private val mOAuthLoginHandler: OAuthLoginHandler = object : OAuthLoginHandler() {
-//        override fun run(p0: Boolean) {
-//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//        }
-//
-//    }
+    val mOAuthLoginModule = OAuthLogin.getInstance()
+    val mOAuthLoginHandler: OAuthLoginHandler = @SuppressLint("HandlerLeak")
+    object: OAuthLoginHandler() {
+        override fun run(success: Boolean) {
+            if (success) {
+                val accessToken = mOAuthLoginModule.getAccessToken(this@SignInActivity)
+                val refreshToken = mOAuthLoginModule.getRefreshToken(this@SignInActivity)
+                val expiresAt: Long = mOAuthLoginModule.getExpiresAt(this@SignInActivity)
+                val tokenType = mOAuthLoginModule.getTokenType(this@SignInActivity)
+                Log.i("SignInActivity", "accessToken: $accessToken")
+                updateToken(this@SignInActivity, accessToken)
+            } else {
+                val errorCode = mOAuthLoginModule.getLastErrorCode(this@SignInActivity).code
+                val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@SignInActivity)
+                toast("errorCode: $errorCode, errorDesc: $errorDesc")
+            }
+        }
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
 
+        val callback: SessionCallback = SessionCallback()
+        Session.getCurrentSession().addCallback(callback)
+        Session.getCurrentSession().checkAndImplicitOpen()
 
-        val oAuthLoginModule = OAuthLogin.getInstance()
-        oAuthLoginModule.init(
+        mOAuthLoginModule.init(
                 this,
                 OAUTH_CLIENT_ID,
                 OAUTH_CLIENT_SECRET,
                 OAUTH_CLIENT_NAME
         )
 
-//        naverLoginButton.setOAuthLoginHandler(object: OAuthLoginHandler() {
-//            override fun run(p0: Boolean) {
-//
-//            }
-//        })
+        naverLoginButton.setOAuthLoginHandler(mOAuthLoginHandler)
+        naverLoginButton.setOnClickListener { mOAuthLoginModule.startOauthLoginActivity(
+                this@SignInActivity, mOAuthLoginHandler)
+            val userApi = provideUserApi(this)
+            val call = userApi.getUserInfo()
+            call.enqueue({
+                response ->
+                val result = response.body()
+                result?.let {
+                    naverUserName.text = it.response.name
+                    Log.e("SignInActivity", "name: ${it.response.name}")
+                }
+            }, {
+                t ->
+                Log.e("SignInActivity", "exception: ${t.printStackTrace()}")
 
-        val callback = SessionCallback()
-        Session.getCurrentSession().addCallback(callback)
-        Session.getCurrentSession().checkAndImplicitOpen()
+            })
 
-//        getKeyHash()
+        }
+
+
+
+
     }
+
+    fun <T> Call<T>.enqueue(success : (response: retrofit2.Response<T>) -> Unit, failure : (t : Throwable) -> Unit ) {
+        enqueue(object: Callback<T> {
+            override fun onFailure(call: Call<T>, t: Throwable) = failure(t)
+
+            override fun onResponse(call: Call<T>, response: Response<T>) = success(response)
+
+        })
+
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data))
@@ -84,19 +128,19 @@ class SignInActivity : AppCompatActivity() {
                     textView.text = result.nickname
 
                 }
-
-
             }
 
             override fun onSessionClosed(errorResult: ErrorResult?) {
+
             }
 
         })
     }
 
+    @SuppressLint("PackageManagerGetSignatures")
     private fun getKeyHash() {
         try {
-            val info: PackageInfo = packageManager.getPackageInfo("com.example.user.signinactivity", PackageManager.GET_SIGNATURES)
+            val info: PackageInfo = packageManager.getPackageInfo("package com.example.user.kakaologin", PackageManager.GET_SIGNATURES)
             for (signature in info.signatures) {
                 val md = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())
@@ -113,17 +157,19 @@ class SignInActivity : AppCompatActivity() {
     inner class SessionCallback : ISessionCallback {
         override fun onSessionOpenFailed(exception: KakaoException?) {
             exception?.let {
-                it.printStackTrace()
+                exception.printStackTrace()
+                Log.i("OAuth_app", "${exception.printStackTrace()}")
+
             }
         }
 
         override fun onSessionOpened() {
-            Log.i("Oauth_app", "onSessionOpened")
+            Log.i("OAuth_app", "onSessionOpened")
             requestMe()
-        }
+//        }
 
-    }
-}
+        }
+    }}
 
 
 
@@ -157,7 +203,6 @@ class GlobalApplication : Application() {
                 override fun isUsingWebviewTimer(): Boolean {
                     return false
                 }
-
             }
         }
     }
