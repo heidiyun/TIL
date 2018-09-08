@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".SignInActivity">
 
+    <include
+        layout="@layout/app_bar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.kakao.usermgmt.LoginButton
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"

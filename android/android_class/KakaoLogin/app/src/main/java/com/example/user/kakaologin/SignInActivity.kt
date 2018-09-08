@@ -8,8 +8,10 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SearchView
 import android.util.Base64
 import android.util.Log
+import android.view.Menu
 import com.kakao.auth.*
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
@@ -19,6 +21,7 @@ import com.kakao.util.exception.KakaoException
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.android.synthetic.main.app_bar_navigation.*
 import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
@@ -57,10 +60,12 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
+        setSupportActionBar(navigationBar)
+        supportActionBar!!.title = null
 
 
-        val callback: SessionCallback = SessionCallback()
-        Session.getCurrentSession().addCallback(callback)
+//        val callback: SessionCallback = SessionCallback()
+//        Session.getCurrentSession().addCallback(callback)
         Session.getCurrentSession().checkAndImplicitOpen()
 
         mOAuthLoginModule.init(
@@ -153,8 +158,34 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.fragment_search, menu)
+//        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        (menu?.findItem(R.id.menuItemSearch)?.actionView as SearchView).apply {
+//
+//            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextSubmit(query: String?): Boolean {
+//                    return false
+//                }
+//
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    println("newText $newText")
+//
+//
+//                    return true
+//                }
+//            })
+//
+//            queryHint = "Search User"
 
-    inner class SessionCallback : ISessionCallback {
+
+//            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+//        }
+        return true
+    }
+
+
+        inner class SessionCallback : ISessionCallback {
         override fun onSessionOpenFailed(exception: KakaoException?) {
             exception?.let {
                 exception.printStackTrace()
