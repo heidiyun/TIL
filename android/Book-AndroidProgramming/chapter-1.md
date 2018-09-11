@@ -1,4 +1,3 @@
-# (실무에 바로 적용하는 안드로이드 프로그래밍)
 # 1. 처음 만드는 안드로이드 애플리케이션
 ## 앱 기본사항
 1. 액티비티 : 안드로이드 SDK 클래스인 Activity의 개개체로, 화면을 통해서 			  사용자가 작업할 수 있게 해준다.
@@ -209,3 +208,5 @@ Activity의 onCreate()에서 setContentView()가 호출되면 LayoutInflater 클
 터미널/프로젝트 디렉토리
 `./gradlew tasks`
 `./gradlew installDebug`
+
+#android
