@@ -1,10 +1,12 @@
 
 # Selector 사용하기
 위젯의 이벤트 효과를 커스텀 할 때 유용하다.
+
 1. 요소
-	* </selector/>
-	 가장 최상위에 위치해야 하는 요소.
-	 하나 이상의 <item> 요소를 포함한다.
+
+* </selector/>
+가장 최상위에 위치해야 하는 요소.
+하나 이상의 <item> 요소를 포함한다.
 ```
 xmlns:android 
 // 필수 항목
@@ -24,9 +26,9 @@ android:variablePadding
 // 기본 값 : False
 ```
 	 
-	* </item/>
-	</selector/>의 하위 요소
- 	특정 상태 동안 사용할 속성을 정의한다.
+* </item/>
+</selector/>의 하위 요소
+특정 상태 동안 사용할 속성을 정의한다.
 ```xml
 android:drawable
 // 필수 항목
@@ -59,6 +61,7 @@ android:state_hovered
 ```
 
 2. 사용 예
+
 res/drawable/button.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
