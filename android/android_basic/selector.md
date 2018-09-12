@@ -1,7 +1,8 @@
+
 # Selector 사용하기
 위젯의 이벤트 효과를 커스텀 할 때 유용하다.
 1. 요소
-	* <selector>
+	* </selector/>
 	 가장 최상위에 위치해야 하는 요소.
 	 하나 이상의 <item> 요소를 포함한다.
 ```
@@ -23,8 +24,8 @@ android:variablePadding
 // 기본 값 : False
 ```
 	 
-	* <item>
-	<selector>의 하위 요소
+	* </item/>
+	</selector/>의 하위 요소
  	특정 상태 동안 사용할 속성을 정의한다.
 ```xml
 android:drawable
@@ -58,7 +59,7 @@ android:state_hovered
 ```
 
 2. 사용 예
-res_drawable_button.xml
+res/drawable/button.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
@@ -67,8 +68,7 @@ res_drawable_button.xml
     <item android:drawable="@color/tabSelectedBackground" android:state_selected="false" />
 </selector>
 ```
-
-res_layout_xxx.xml
+res/layout/xxx.xml
 ```java
 <Button
     android:layout_height="wrap_content"
