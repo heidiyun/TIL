@@ -19,6 +19,7 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mNextButton;
     private ImageButton mBackButton;
     private TextView mQuestionView;
+    private static final String KEY_INDEX = "index";
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_oceans, true),
@@ -40,7 +41,12 @@ public class QuizActivity extends AppCompatActivity {
         mFalseButton = findViewById(R.id.false_button);
         mQuestionView = findViewById(R.id.question_text_view);
 
-        updateQuestion();
+        if(savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
+        }
+
+        int question = mQuestionBank[mCurrentIndex].getmTextResId();
+        mQuestionView.setText(question);
 
         mQuestionView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,5 +115,11 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_INDEX, mCurrentIndex);
     }
 }
