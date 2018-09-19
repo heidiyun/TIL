@@ -1,5 +1,7 @@
 package kr.ac.ajou.heidi.geoquiz
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -22,13 +24,16 @@ class QuizActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_INDEX = "index"
+        const val REQUEST_CODE_CHEAT = 0
     }
+
+    private var isCheater = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt(KEY_INDEX, 0)
         }
 
@@ -53,6 +58,15 @@ class QuizActivity : AppCompatActivity() {
         falseButton.setOnClickListener {
             checkAnswer(false)
         }
+
+        cheatButton.setOnClickListener {
+            //            val intent = Intent(this, CheatActivity::class.java)
+//            intent.putExtra("answer", questionBank[currentIndex].answerTrue)
+//            startActivity(intent)
+            val intent = newIntent(this, questionBank[currentIndex].answerTrue)
+            startActivityForResult(intent, REQUEST_CODE_CHEAT)
+        }
+
         val question = questionBank[currentIndex].textResId
         questionTextView.text = getString(question)
 
@@ -75,10 +89,14 @@ class QuizActivity : AppCompatActivity() {
     private fun checkAnswer(userPressedTrue: Boolean) {
         val answerIsTrue = questionBank[currentIndex].answerTrue
 
-        if (userPressedTrue == answerIsTrue) {
-            toast(R.string.correct_toast)
+        if (isCheater) {
+            toast(R.string.judgment_toast)
         } else {
-            toast(R.string.incorrect_toast)
+            if (userPressedTrue == answerIsTrue) {
+                toast(R.string.correct_toast)
+            } else {
+                toast(R.string.incorrect_toast)
+            }
         }
 
     }
@@ -112,6 +130,15 @@ class QuizActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         Log.i("QuizActivity", "onSaveInstanceState")
         outState?.putInt(KEY_INDEX, currentIndex)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) return
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            data?.let {
+                isCheater = wasAnswerShown(data)
+            }
+        }
     }
 }
 
