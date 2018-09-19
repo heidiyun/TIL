@@ -33,8 +33,9 @@ class QuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
-        if (savedInstanceState != null) {
-            currentIndex = savedInstanceState.getInt(KEY_INDEX, 0)
+        savedInstanceState?.let {
+            currentIndex = it.getInt(KEY_INDEX, 0)
+            isCheater = it.getBoolean("isCheater")
         }
 
 
@@ -49,6 +50,7 @@ class QuizActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
+            isCheater = false
             updateQuestion()
         }
         trueButton.setOnClickListener {
@@ -89,7 +91,8 @@ class QuizActivity : AppCompatActivity() {
     private fun checkAnswer(userPressedTrue: Boolean) {
         val answerIsTrue = questionBank[currentIndex].answerTrue
 
-        if (isCheater) {
+        if (isCheater || questionBank[currentIndex].isCheater) {
+            questionBank[currentIndex].isCheater = true
             toast(R.string.judgment_toast)
         } else {
             if (userPressedTrue == answerIsTrue) {
@@ -98,7 +101,6 @@ class QuizActivity : AppCompatActivity() {
                 toast(R.string.incorrect_toast)
             }
         }
-
     }
 
     override fun onStart() {
@@ -128,8 +130,8 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        Log.i("QuizActivity", "onSaveInstanceState")
         outState?.putInt(KEY_INDEX, currentIndex)
+        outState?.putBoolean("isCheater", isCheater)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -4,10 +4,12 @@ public class Question {
 
     private int mTextResId;
     private boolean mAnswerTrue;
+    private boolean mIsCheater;
 
     public Question(int mTextResId, boolean mAnswerTrue) {
         this.mTextResId = mTextResId;
         this.mAnswerTrue = mAnswerTrue;
+        this.mIsCheater = false;
     }
 
     public int getmTextResId() {
@@ -24,5 +26,13 @@ public class Question {
 
     public void setmAnswerTrue(boolean mAnswerTrue) {
         this.mAnswerTrue = mAnswerTrue;
+    }
+
+    public boolean ismIsCheater() {
+        return mIsCheater;
+    }
+
+    public void setmIsCheater(boolean mIsCheater) {
+        this.mIsCheater = mIsCheater;
     }
 }

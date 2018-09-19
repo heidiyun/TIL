@@ -20,6 +20,11 @@ public class CheatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
+
+        if (savedInstanceState != null) {
+            setAnswerShownResult(savedInstanceState.getBoolean(EXTRA_ANSWER_SHOWN));
+        }
+
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TURE, false);
 
         mAnswerTextView = findViewById(R.id.answer_text_view);
@@ -35,6 +40,12 @@ public class CheatActivity extends AppCompatActivity {
                 setAnswerShownResult(true);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_ANSWER_SHOWN, false);
     }
 
     public static Intent newIntent(Context packageContext, boolean answerIsTrue) {

@@ -61,6 +61,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
+            mIsCheater = savedInstanceState.getBoolean("isCheater");
         }
 
         int question = mQuestionBank[mCurrentIndex].getmTextResId();
@@ -138,7 +139,8 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (mIsCheater) {
+        if (mIsCheater || mQuestionBank[mCurrentIndex].ismIsCheater()) {
+            mQuestionBank[mCurrentIndex].setmIsCheater(true);
             messageResId = R.string.judgment_toast;
         } else {
             if (userPressedTrue == answerIsTrue) {
@@ -155,5 +157,6 @@ public class QuizActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putBoolean("isCheater", mIsCheater);
     }
 }
