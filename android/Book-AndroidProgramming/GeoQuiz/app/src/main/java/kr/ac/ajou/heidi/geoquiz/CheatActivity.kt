@@ -3,6 +3,7 @@ package kr.ac.ajou.heidi.geoquiz
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -18,7 +19,7 @@ class CheatActivity : AppCompatActivity() {
         const val IS_ANSWER_SHOWN = "kr.ac.ajou.heidi.quizapp.is_answer_shown"
     }
 
-    var isAnswerShown = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cheat)
@@ -32,9 +33,10 @@ class CheatActivity : AppCompatActivity() {
         cheatButton.setOnClickListener {
             if (answer) answerTextView.text = getString(R.string.true_button)
             else answerTextView.text = getString(R.string.false_button)
-            isAnswerShown = true
-            setAnswerShownResult(isAnswerShown)
+            setAnswerShownResult(true)
         }
+
+        apiLevelTextView.text = getString(R.string.api_level, Build.VERSION.SDK_INT)
     }
 
     fun setAnswerShownResult(isAnswerShown: Boolean) {

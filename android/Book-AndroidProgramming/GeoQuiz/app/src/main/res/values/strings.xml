@@ -18,4 +18,6 @@
     <string name="cheat_button">커닝하기!</string>
     <string name="judgment_toast">커닝은 나쁜 짓이죠.</string>
 
+    <string name="api_level">API 레벨 %d</string>
+
 </resources>

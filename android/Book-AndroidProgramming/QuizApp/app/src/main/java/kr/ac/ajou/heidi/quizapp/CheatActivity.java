@@ -1,10 +1,14 @@
 package kr.ac.ajou.heidi.quizapp;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -14,7 +18,8 @@ public class CheatActivity extends AppCompatActivity {
     private static final String EXTRA_ANSWER_SHOWN = "kr.ac.ajou.heidi.quizapp.answer_shown";
     private boolean mAnswerIsTrue;
     private TextView mAnswerTextView;
-    private Button mShowanswer;
+    private Button mShowAnswer;
+    private TextView mApiLevelTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +31,11 @@ public class CheatActivity extends AppCompatActivity {
         }
 
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TURE, false);
-
         mAnswerTextView = findViewById(R.id.answer_text_view);
-        mShowanswer = findViewById(R.id.show_answer_button);
-        mShowanswer.setOnClickListener(new View.OnClickListener() {
+        mShowAnswer = findViewById(R.id.show_answer_button);
+        mApiLevelTextView = findViewById(R.id.api_level_text_view);
+        mApiLevelTextView.setText(String.valueOf("API 레벨" + Build.VERSION.SDK_INT));
+        mShowAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mAnswerIsTrue) {
@@ -38,6 +44,25 @@ public class CheatActivity extends AppCompatActivity {
                     mAnswerTextView.setText(R.string.false_button);
                 }
                 setAnswerShownResult(true);
+
+                int cx = mShowAnswer.getWidth() / 2;
+                int cy = mShowAnswer.getHeight() / 2;
+                float radius = mShowAnswer.getWidth();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Animator anim = ViewAnimationUtils
+                            .createCircularReveal(mShowAnswer, cx, cy, radius, 0);
+                    anim.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mShowAnswer.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                    anim.start();
+                } else {
+                    mShowAnswer.setVisibility(View.INVISIBLE);
+                }
             }
         });
     }
