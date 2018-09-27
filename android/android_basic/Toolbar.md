@@ -3,6 +3,52 @@ Toolbar 컴포넌트는 안드로이드 5.0(롤리팝)에서 새로 추가됨.
 롤리팝 이전에는 actionbar를 toolbar 역할을 수행하였다.
 -> AppCompat 라이브러리를 사용하면 안드로이드 API 레벨 7(안드로이드 2.1)까지 toolbar를 사용할 수 있다.
 
+[앱 바 설정  |  Android Developers](https://developer.android.com/training/appbar/setting-up?hl=ko)
+
+## Toolbar 사용하기.
+1. v7 AppCompat support library를 gradle에 추가.
+2. activity가 AppCompatActivity 상속
+3. AndroidManifest.xml 
+
+```xml
+<application
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+    />
+```
+
+ res/style.xml
+```xml
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    
+```
+
+4. 레이아웃 파일 
+```xml
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+</android.support.v7.widget.Toolbar>
+// 기본 설정
+```
+
+5. Activity class
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+	  setSupportActionBar(toolbar)
+}
+```
+
+### toolbar 속성
+1. Toolbar 색상을 바꾸고 싶을 때
+`android:background=“@color/colorPrimary”`
+2. Toolbar title color를 바꾸고 싶을 때
+`app:titleTextColor=“@color/whiteColor”>`
+
+
 ## AppCompat 라이브러리 사용하기
 1. 모든 액티비티가 AppCompatActivity를 상속한다. (자동)
 2. AppCompat 라이브러리를 추가한다. (자동)
@@ -18,10 +64,9 @@ Toolbar 컴포넌트는 안드로이드 5.0(롤리팝)에서 새로 추가됨.
 		3. always : 항상 툴바에 보여준다.
 		4. never : 오버플로 메뉴로 들어간다.
 
-
 ## 메소드
 
-```
+```kotlin
 fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater)
 //  액티비티에 대한 옵션 메뉴 지정 
 //  onCreate에서 setHasOptionsMenu(true)를 추가해주어야 한다.
@@ -72,4 +117,4 @@ supportActionBar?.setDisplayHomeAsUpEnabled(true)
 	-> 한 화면에 여러개의 프래그먼트를 쓸 경우 유용)
 
 
-
+#android
