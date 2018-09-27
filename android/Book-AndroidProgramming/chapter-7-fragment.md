@@ -118,5 +118,14 @@ Transaction은 fragment list 에 add, remove, attach, detach, replace 하는데 
     }
 ```
 
+### FragmentManager와 프래그먼트 생명주기
+FragmentManager은 리스트에 있는 프래그먼트들의 생명주기 메소드를 호출하는 책임을 갖는다.
+
+onAttach, onCreate, onCreateView 메소드는 FragmentManager에 프래그먼트를 추가할 때 호출된다. 
+onActivityCreated는 호스팅 액티비티의 onCreate메소드가 실행된 후 호출된다.
+
+FragmentManager가 액티비티 상태와 프래그먼트 상태를 같게 만들어준다.
+안드로이드 운영체제로부터 액티비티 생명주기 메소드가 호출될 때 그것과 부합하는 프래그먼트 생명주기 메소드가 호출된다.
+
 
 #android/책
