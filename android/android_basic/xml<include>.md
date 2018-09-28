@@ -1,4 +1,4 @@
-# xml <include>
+# xml-include
 같은 기능을 가지는 Layout을 여러 Activity에서 사용하는 경우가 있다.
 Activity 마다 같은 형식의 Layout을 만들어 주는 것보다,
 **include** 속성을 이용하면 하나의 레이아웃을 작성한 후 여러 액티비티에서 공유할 수 있다.
