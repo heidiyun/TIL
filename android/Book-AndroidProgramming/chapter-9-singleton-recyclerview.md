@@ -77,11 +77,45 @@ class ListRow extends RecyclerView.ViewHolder {
 ListRow row = new ListRow(inflater.inflate(R.layout.list_row, parent, false));
 View view = row.itemView;
 ImageView thumbnailView = row.mThumbnail;
-
 ```
 
 itemView는 슈퍼 클래스인 RecyclerView.ViewHolder가 지정해준 필드로, 
 super(itemView)의 인자로 전달한 View 객체 참조를 보존한다. 
+
+```java
+/* java */
+class RepoViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent./context/).inflate(R.layout./repo_item/, parent, false)
+)
+
+private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
+
+    @NonNull
+    @Override
+    public CrimeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater./from/(getActivity());
+        View view = layoutInflater.inflate(R.layout./list_item_crime/, parent, false);
+        return new CrimeHolder(view);
+    }
+
+
+/* kotlin */
+
+/* kotlin에서 findViewById를 사용하지 않게 변하면서, 
+ViewHolder의 생성자에서 view를 맵핑해주는 것이 아니라, 바로 레이아웃을 인플레이트 하는 형태로 변하게 되었다.
+그래서, ViewHolder의 인자로 View가 아닌 ViewGroup을 직접 받게 되었다. */
+
+class RepoViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent./context/).inflate(R.layout./repo_item/, parent, false)
+)
+
+inner class SearchListAdapter(val context: Context) : RecyclerView.Adapter<RepoViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder {
+        return RepoViewHolder(parent)
+    }
+}
+```
 
 ### Adapter
 > controller 객체로 RecyclerView와 View 사이에 위치한다.  
