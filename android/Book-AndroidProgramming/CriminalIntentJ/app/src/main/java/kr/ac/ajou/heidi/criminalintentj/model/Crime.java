@@ -1,5 +1,9 @@
 package kr.ac.ajou.heidi.criminalintentj.model;
 
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -46,5 +50,5 @@ public class Crime {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, YYYY", Locale.US);
         return dateFormat.format(mDate);
     }
-}
 
+}
