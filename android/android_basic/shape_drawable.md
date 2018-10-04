@@ -21,6 +21,10 @@ android:shape="rectangle">
         android:bottom="7dp"
         android:right="7dp" />
     <corners android:radius="4dp" />
+	  <size android:width="100dp"
+    		android:height="100dp" />
+
+
 </shape>
 ```
 
@@ -36,6 +40,7 @@ dashWidth, dashGap은 점선을 그릴 때 사용한다.
 * corners : 가장자리를 둥글게 처리한다.
 		속성 값이 클수록 가장자리가 더욱 둥글게 표현된다.
 * padding : 패딩 값을 넣어줍니다.
+* size : width, height를 지정합니다.
 
 ## 사용법
 Layout xml 파일에서 사용합니다.
