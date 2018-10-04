@@ -1,5 +1,5 @@
 # Tab Scroll
-> DrawerLayout + CoordinatorLayout + AppBarLayout + TabLayout(ViewPager)
+> DrawerLayout + CoordinatorLayout + AppBarLayout + TabLayout(ViewPager)  
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -122,9 +122,13 @@
 ```
 
 * Coordinator 안에 tab scroll을 구현할 모든 내용이 들어가야 한다.
-* AppBarLayout 안에 스크롤시 숨겨지거나 올라가는 동작을 하는 bar layout이 들어가야 한다.
+* AppBarLayout 안에 스크롤시 숨겨지거나 올라가는 동작을 하는 AppBar layout이 들어가야 한다.
+Scroll 시 남기고싶은 영역의 height만큼의 margin을 잡아주어야 한다. `android:layout_marginTop=“50dp”`
 (Github Profile, TabLayout)
 * NestedScrollView와 ViewPager가 같이 있을 시에는 잘 동작하지 않으므로 둘 중 하나만 써야 한다.
 (NestedScrollView 안에 ViewPager를 넣을 경우 Fragment를 받아오지 못한다.)
-* NavigationDrawer은 CoordinatorLayout 밖에 위치해야 한다. 
-* app_bar_navigation이 맨 위로 올라가게 되면 AppBarLayout에 의해 감춰지고, 아래로 내려가면 AppBarLayout이 app_bar_navigation 안으로 숨겨진다. 
+* NavigationDrawer은 CoordinatorLayout 밖에 위치해야 한다.
+* app_bar_navigation이 맨 위로 올라가게 되면 AppBarLayout에 의해 감춰지고, 아래로 내려가면 AppBarLayout이 app_bar_navigation 안으로 숨겨진다.
+
+
+#android/basic
