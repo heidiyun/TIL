@@ -1,11 +1,14 @@
 package kr.ac.ajou.heidi.criminalintentj.controller;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.UUID;
 
 import kr.ac.ajou.heidi.criminalintentj.R;
 import kr.ac.ajou.heidi.criminalintentj.model.Crime;
@@ -22,6 +26,7 @@ import kr.ac.ajou.heidi.criminalintentj.model.CrimeLab;
 public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
+    private int resultCrimePosition;
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -49,7 +54,8 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), mCrime.getmTitle() + " 선택됨!"  , Toast.LENGTH_SHORT).show();
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getmId());
+            startActivityForResult(intent, 123);
         }
     }
 
@@ -93,12 +99,35 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            UUID crimeId = (UUID) data.getSerializableExtra("crime_id");
+            for (int i = 0; i < mAdapter.mCrimes.size(); i++) {
+                if (mAdapter.mCrimes.get(i).getmId() == crimeId) {
+                    resultCrimePosition = i;
+                }
+            }
+        }
+    }
+
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+//            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(resultCrimePosition);
+        }
 
     }
 }
