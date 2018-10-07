@@ -4,15 +4,24 @@
   "description": "Todo list server",
   "main": "server.js",
   "scripts": {
+    "start": "nodemon server.js | bunyan",
+    "publish": "NODE_ENV=production node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "YunJeong Goo",
   "license": "UNLICENSED",
   "dependencies": {
     "bunyan": "^1.8.12",
+    "dotenv": "^6.0.0",
+    "humanize": "0.0.9",
+    "humanize-number": "0.0.2",
     "koa": "^2.5.3",
-    "koa-logger": "^3.2.0",
-    "koa-router": "^7.4.0",
-    "lodash": "^4.17.11"
+    "koa-bodyparser": "^4.2.1",
+    "koa-joi-router": "^5.1.0",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
   }
 }
