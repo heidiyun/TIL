@@ -18,6 +18,8 @@
         <activity android:name=".controller.CrimeActivity">
 
         </activity>
+
+        <activity android:name=".controller.CrimePagerActivity" />
     </application>
 
 </manifest>
