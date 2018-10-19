@@ -9,80 +9,80 @@ const _ = require("lodash");
 const humanize = require('humanize-number');
 
 function time(start) {
-    const delta = new Date - start;
-    return humanize(delta < 10000
-      ? delta + 'ms'
-      : Math.round(delta / 1000) + 's');
-  }
+  const delta = new Date - start;
+  return humanize(delta < 10000
+    ? delta + 'ms'
+    : Math.round(delta / 1000) + 's');
+}
 
 const reqSerializer = (ctx = {}) => {
-    return {
-      method: ctx.method,
-      path: ctx.path,
-      url: ctx.url,
-      headers: ctx.headers,
-      protocol: ctx.protocol,
-      ip: ctx.ip,
-      query: ctx.query,
-      body: ctx.request.body,
-    };
+  return {
+    method: ctx.method,
+    path: ctx.path,
+    url: ctx.url,
+    headers: ctx.headers,
+    protocol: ctx.protocol,
+    ip: ctx.ip,
+    query: ctx.query,
+    body: ctx.request.body,
+  };
+}
+
+const resSerializer = function (ctx = {}) {
+  return {
+    statusCode: ctx.status,
+    responseTime: ctx.responseTime,
+    type: ctx.type,
+    headers: (ctx.response || {}).headers,
+    body: ctx.body,
+  };
+}
+
+const log = function ({ logger = null } = {}) {
+  //  인자로 logger라는 것이 있으면 바로 쓸 수 있다.
+  // logger가 인자로 전달되지 않으면 null이 기본값이 된다.
+  if (_.isNil(logger)) {
+    throw Error("Logger is required");
   }
-  
-  const resSerializer = function (ctx = {}) {
-    return {
-      statusCode: ctx.status,
-      responseTime: ctx.responseTime,
-      type: ctx.type,
-      headers: (ctx.response || {}).headers,
-      body: ctx.body,
-    };
-  }
+  return async (ctx, next) => {
+    logger.info("hello");
+    ctx.log = logger;
+    ctx.log.addSerializers({
+      req: reqSerializer,
+      res: resSerializer,
+      err: bunyan.stdSerializers.err,
+    });
 
-const log = function ( {logger = null} = {}) {
-    //  인자로 logger라는 것이 있으면 바로 쓸 수 있다.
-    // logger가 인자로 전달되지 않으면 null이 기본값이 된다.
-    if (_.isNil(logger)) {
-        throw Error("Logger is required");
-    }
-    return async (ctx, next) => {
-      logger.info("hello");
-      ctx.log = logger;
-      ctx.log.addSerializers({
-        req: reqSerializer,
-        res: resSerializer,
-        err: bunyan.stdSerializers.err,
-      });
+    //requset logging
+    ctx.log.info({
+      req: ctx,
+      event: "request",
+    });
 
-      //requset logging
-      ctx.log.info({
-          req:ctx,
-          event: "request",
-      });
+    // debug, info, warn, error -> level
 
-      // debug, info, warn, error -> level
-
-      try {
-          const startTime = new Date();
+    try {
+      const startTime = new Date();
       await next();
       // router에 동작한 handler가 동작해서 response가 온다.
-        ctx.responseTime = time(startTime);
-        // response time은 사용자가 계산해주어야 한다.
+      ctx.responseTime = time(startTime);
+      // response time은 사용자가 계산해주어야 한다.
 
       // response logging
       ctx.log.info({
         //   req: ctx,
-          res: ctx,
-          event: "response",
+        res: ctx,
+        event: "response",
       });
-    } catch(err) {
-        ctx.log.error({
-            err,
-            event: "error",
-        });
-        throw err;
-        // err를 밖으로 던져줘야 무슨 에러인지 나타난다.
+    } catch (err) {
+      ctx.log.error({
+        err,
+        event: "error",
+      });
+      throw err;
+      // err를 밖으로 던져줘야 무슨 에러인지 나타난다.
     }
-    };
+  };
 }
 
 // const log = function ( options = {}) {

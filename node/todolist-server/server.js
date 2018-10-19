@@ -9,6 +9,12 @@ const logger = require("./logger");
 // const logger = require('koa-logger');
 const config = require("./config");
 const bodyParser = require("koa-bodyparser");
+const mongoose = require("mongoose");
+
+mongoose.set('userNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
 
 console.log(config);
 
@@ -62,7 +68,7 @@ app.on("error", (err, ctx) => {
 
 //     if (err.isJoi) {
 //         ctx.status = 400;
-        
+
 //         // ctx.body = JSON({
 //         //     message: err.message
 //         // });
@@ -71,6 +77,7 @@ app.on("error", (err, ctx) => {
 
 // app.use(bodyParser());
 app.use(router.middleware());
+
 // app.use(router.routes())
 // .use(router.allowedMethods());
 
@@ -97,16 +104,30 @@ const setupDatabase = () => {
 };
 */
 
-const setupDatabase = function(config) {
-    const mongoose = require("mongoose");
+// const userSchema = new mongoose.Schema({
+//     name: String,
+//     email: String,
+// });
+
+// const Person = mongoose.model('users', userSchema);
+
+// const person = new Person({name: "hi"});
+
+// person.save(function(err) {
+//     if (err) 
+//         console.log(err);
+// });
+
+
+const setupDatabase = function (config) {
     // const dbUri = "mongodb://hello:1234qwer@13.209.98.172:20000/hello";
-    with(config.database) {
-    const dbUri = `mongodb://${user}:${password}@${host}:${port}/${name}`;
-    
-    console.log(dbUri);
-    mongoose.connect(dbUri, {
-        useNewUrlParser: true,
-    });
+    with (config.database) {
+        const dbUri = `mongodb://${user}:${password}@${host}:${port}/${name}`;
+
+        console.log(dbUri);
+        mongoose.connect(dbUri, {
+            useNewUrlParser: true,
+        });
     }
 
     const db = mongoose.connection;
@@ -129,5 +150,39 @@ const setupDatabase = function(config) {
 
 setupDatabase(config);
 
+
+// function exec() {
+//     Person.create({ name: "tom", email: "heidiyun.goo@gmail.com" }, (error1, newPerson) => {
+//         if (error1) {
+//             console.log("error1");
+//             return handleError(error1);
+//         }
+
+//         Person.findById(newPerson._id, (error2, foundPerson) => {
+//             if (error2) {
+//                 console.log("error2");
+//                 return handleError(error2);
+//             }
+
+//             // foundPerson.name = "yunjin";
+
+//             foundPerson.save((error3, updatedPerson) => {
+//                 if (error3) {
+//                     console.log("error3");
+//                     return handleError(error3);
+//                 }
+
+//                 console.log('successfully saved person');
+//                 // process.exit(0);
+//             });
+//         });
+//     });
+// }
+
+
+
+
+
+// deletePerson("5bc87d4e78d7335deccc1c58");
 
 app.listen(3000);
