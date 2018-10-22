@@ -16,7 +16,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import kr.ac.ajou.heidi.criminalintentj.R;
@@ -35,7 +37,7 @@ public class CrimeListFragment extends Fragment {
         private CheckBox mSolvedCheckBox;
         private Crime mCrime;
 
-        public CrimeHolder(@NonNull View itemView) {
+        CrimeHolder(@NonNull View itemView) {
             super(itemView);
 
             mTitleTextView = itemView.findViewById(R.id.list_item_crime_title_text_view);
@@ -47,8 +49,12 @@ public class CrimeListFragment extends Fragment {
 
         public void bindCrime(Crime crime) {
             mCrime = crime;
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, YYYY", Locale.US);
+            String date = dateFormat.format(mCrime.getmDate());
+
             mTitleTextView.setText(mCrime.getmTitle());
-            mDateTextView.setText(mCrime.getmDate());
+            mDateTextView.setText(date);
             mSolvedCheckBox.setChecked(mCrime.ismSolved());
         }
 

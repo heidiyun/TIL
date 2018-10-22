@@ -46,9 +46,9 @@ public class Crime {
         this.mSolved = mSolved;
     }
 
-    public String getmDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, YYYY", Locale.US);
-        return dateFormat.format(mDate);
+    public Date getmDate() {
+
+        return mDate;
     }
 
 }
