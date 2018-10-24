@@ -68,6 +68,17 @@ public void setTargetFragment(Fragment fragment, int requestCode)
 ```
  FragmentManager는 목표 프래그먼트와 요청 코드를 추적 관리한다.
 목표로 설정했던 프래그먼트의 getTargetFragment(), getTargetRequestCode() 메소드를 호출하면 그 정보를 알 수 있다.
+	
+
+### 폰/태블릿
+보통의 폰에서는 부모 액티비티의 프래그먼트가 startActivityForResult(...)를 호출함으로 시작되고,  부모 액티비티가 onActivityResult(...)를 호출 받으면 자식 액티비티가 끝난다. 
+이 호출은 자식 액티비티를 실행시킨 프래그먼트에 전달된다.
+
+태블릿은 일반적인 폰보다 화면의 여유가 많기 때문에, DialogFragment를 사용자에게 보여주는 것이 더 좋을때가 많다.
+이 경우에는 목표 프래그먼트를 설정하고 DialogFragment의 show(...)를 호출하여 Dialog가 나타나게 한다. 그리고 Dialog가 끝날 때 DialogFramgnet는 자신의 목표 프래그먼트의 onActivityResult(...)를 호출한다. 
+
+		
+
 
 
 

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
-        returnResult();
+
     }
 
     @Override
@@ -51,7 +52,7 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setmDate(date);
-            mDateButton.setText(mCrime.getmDate().toString());
+            updateDate();
 
         }
     }
@@ -79,16 +80,12 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, YYYY", Locale.US);
-        String date = dateFormat.format(mCrime.getmDate());
-
         mDateButton = view.findViewById(R.id.crime_date);
-        mDateButton.setText(date);
+        updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getmDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
@@ -104,6 +101,8 @@ public class CrimeFragment extends Fragment {
                 mCrime.setmSolved(isChecked);
             }
         });
+
+        returnResult();
 
         return view;
     }
@@ -121,5 +120,11 @@ public class CrimeFragment extends Fragment {
         Intent data = new Intent();
         data.putExtra("crime_id", mCrime.getmId());
         getActivity().setResult(Activity.RESULT_OK, data);
+    }
+
+    private void updateDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, YYYY", Locale.US);
+        String date = dateFormat.format(mCrime.getmDate());
+        mDateButton.setText(date);
     }
 }
