@@ -19,7 +19,8 @@
 
         </activity>
 
-        <activity android:name=".controller.CrimePagerActivity" />
+        <activity android:name=".controller.CrimePagerActivity"
+            android:parentActivityName=".controller.CrimeListActivity"/>
     </application>
 
 </manifest>
