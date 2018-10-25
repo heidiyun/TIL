@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const _ = require("lodash");
 const Joi = require("koa-joi-router").Joi;
+const bcrypt = require("bcrypt");
+const { ClientError,
+NotFoundError} = require("../error");
+
+const jwt = require("jsonwebtoken");
+const {
+    jwtSecret
+} = require("../config");
+console.log(jwtSecret);
 
 // Validator : Joi
 
@@ -10,14 +19,12 @@ const Joi = require("koa-joi-router").Joi;
 //     ctx.body = "ok";
 // };
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-});
+// const userSchema = new mongoose.Schema({
+//     name: String,
+//     email: String,
+//     password: String,
+// });
 
-const Person = mongoose.model('users', userSchema);
-
-// module.exports.postUser = postUser;
 const postUser = {
     path: "/users",
     method: "POST",
@@ -25,36 +32,85 @@ const postUser = {
         body: {
             email: Joi.string().email().required(),
             name: Joi.string().required(),
+            password: Joi.string().regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/).required(),
             // name: Joi.string().default("Unnamed")
             // name을 입력하지 않아도 될 때 default값으로 들어간다.
         },
         type: "json",
     },
     async handler(ctx) {
-        ctx.body = await exec(ctx.request.body);
-        ctx.status = 201;
+        ctx.body = await User.signUp(ctx.request.body);
+        // const user = new User(ctx.request.body);
+        
+        // const {
+        //     eamil,
+        //     password,
+        // } = ctx.request.body
+
+        // const data = (await user.save()).toObject();
+
+        // ctx.body = await User.signUp(ctx.request.body);
+
+        // const user = new User(ctx.request.body);
+
+      /*  const {
+            email,
+            password
+        } = ctx.request.body
+
+        const exist = await User.findOne({
+            email
+        }).exec();
+
+        if (!_.isNil(exist)) {
+            throw new ClientError("Already exist email");
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const user = new User({
+            ...ctx.request.body,
+            password: passwordHash,
+        });
+    
+        const data = (await user.save()).toObject();
+        delete data.password;
+
+        ctx.body = data;
+
+        // ctx.body = await exec(ctx.request.body);
+        // ctx.status = 201;
+        */
     }
 
     //함수 형식
 };
 
 const getUser = {
-    path: "/users",
-    method: "GET",
+    path: "/user",
+    method: "GET",          
+    validate : {
+        headers: Joi.object( { 
+            'access_token': Joi.any().valid('application/json').required(),
+        }).unknown()
+    },
     async handler(ctx) {
-        ctx.body = await getPerson();
-        ctx.status = 201;
+        console.log(ctx.request.body);
+       const user = await User.getUser(ctx.request.body);
+    //    ctx.body = user;
+    //     // ctx.body = await getPerson();
+    //     ctx.status = 201;
     }
 };
 
 const updateUser = {
-    path: "/users/update",
-    method: "POST",
+    path: "/users",
+    method: "PUT",
     validate : {
         body : {
-            _id: Joi.string().required(),
-            name: Joi.string().required(),
-            email: Joi.string().email().required(),
+            _id: Joi.string(),
+            name: Joi.string(),
+            email: Joi.string().email(),
         },
         type: "json"
     },
@@ -65,8 +121,8 @@ const updateUser = {
 };
 
 const deleteUser = {
-    path: "/users",
-    method: "DELETE",
+    path: "/users/delete",
+    method: "POST",
     validate: {
         body: {
             _id: Joi.string().required()
@@ -83,9 +139,9 @@ const deleteUser = {
 async function exec(body) {
 
     try {
-        const person = await Person.create({ name: body.name, email: body.email });
-        // const foundPerson = await Person.findById(person._id);
-        const updatePerson = await person.save();
+        const person = await Person.create({ name: body.name, email: body.email, password: body.password });
+        const foundPerson = await Person.findById(person._id);
+        const updatePerson = await foundPerson.save();
         return updatePerson;
     } catch (e) {
         return e;
@@ -127,7 +183,7 @@ function handleError(error) {
 }
 
 async function getPerson() {
-    const people = await Person.find();
+    const people = await User.find();
     console.log("people" + people);
     return people;
 }
@@ -150,9 +206,32 @@ async function deletePerson(id) {
     console.log(result);
 }
 
+const signIn = {
+    path: "/auth/login",
+    method: "POST",
+    validate : {
+        body : {
+            email: Joi.string().email().required(),
+            password: Joi.string().required(),
+        },
+        type: "json"
+    },
+
+    async handler (ctx) {
+       const token = await User.signIn(ctx.request.body);
+
+       
+       ctx.body = {
+           token,
+       };
+    }
+    
+}
+
 module.exports = [
     postUser,
     getUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    signIn
 ];

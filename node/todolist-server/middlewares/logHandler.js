@@ -38,9 +38,10 @@ const resSerializer = function (ctx = {}) {
   };
 }
 
-const log = function ({ logger = null } = {}) {
+const log = function ({ logger = null } = { } ) {
   //  인자로 logger라는 것이 있으면 바로 쓸 수 있다.
   // logger가 인자로 전달되지 않으면 null이 기본값이 된다.
+  
   if (_.isNil(logger)) {
     throw Error("Logger is required");
   }

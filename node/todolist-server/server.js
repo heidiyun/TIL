@@ -31,7 +31,7 @@ const router = require("./routes");
 
 const logHandler = require("./middlewares/logHandler");
 app.use(logHandler({
-    logger
+    logger,
     // logger.js에서 설정한 logger를 전달해준다.
 }));
 
