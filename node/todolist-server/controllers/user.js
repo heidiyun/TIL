@@ -1,10 +1,9 @@
-const mongoose = require("mongoose");
 const User = require("../models/User");
 const _ = require("lodash");
 const Joi = require("koa-joi-router").Joi;
 const bcrypt = require("bcrypt");
 const { ClientError,
-NotFoundError} = require("../error");
+    NotFoundError } = require("../error");
 
 const jwt = require("jsonwebtoken");
 const {
@@ -12,18 +11,7 @@ const {
 } = require("../config");
 console.log(jwtSecret);
 
-// Validator : Joi
-
-// const postUser = (ctx) => {
-//     // console.log(ctx.request.body);
-//     ctx.body = "ok";
-// };
-
-// const userSchema = new mongoose.Schema({
-//     name: String,
-//     email: String,
-//     password: String,
-// });
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/;
 
 const postUser = {
     path: "/users",
@@ -32,7 +20,7 @@ const postUser = {
         body: {
             email: Joi.string().email().required(),
             name: Joi.string().required(),
-            password: Joi.string().regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/).required(),
+            password: Joi.string().regex(passwordRegex).required(),
             // name: Joi.string().default("Unnamed")
             // name을 입력하지 않아도 될 때 default값으로 들어간다.
         },
@@ -40,74 +28,60 @@ const postUser = {
     },
     async handler(ctx) {
         ctx.body = await User.signUp(ctx.request.body);
-        // const user = new User(ctx.request.body);
-        
-        // const {
-        //     eamil,
-        //     password,
-        // } = ctx.request.body
 
-        // const data = (await user.save()).toObject();
-
-        // ctx.body = await User.signUp(ctx.request.body);
-
-        // const user = new User(ctx.request.body);
-
-      /*  const {
-            email,
-            password
-        } = ctx.request.body
-
-        const exist = await User.findOne({
-            email
-        }).exec();
-
-        if (!_.isNil(exist)) {
-            throw new ClientError("Already exist email");
-        }
-
-        const passwordHash = await bcrypt.hash(password, 10);
-
-        const user = new User({
-            ...ctx.request.body,
-            password: passwordHash,
-        });
-    
-        const data = (await user.save()).toObject();
-        delete data.password;
-
-        ctx.body = data;
-
-        // ctx.body = await exec(ctx.request.body);
-        // ctx.status = 201;
-        */
     }
+};
 
-    //함수 형식
+const putUser = {
+    path: "/update",
+    method: "PUT",
+    validate: {
+        body: Joi.object({
+            name: Joi.string(),
+            email: Joi.string().email(),
+            password: Joi.string().regex(passwordRegex),
+        }).or("email", "name", "password").required(),
+        type: "json"
+    },
+    async handler(ctx) {
+        // if (_.isNil(ctx.user)) {
+        //     throw new ClientError("Unauthorization");
+        // }
+
+        // const {
+        //     password = null
+        // } = ctx.request.body;
+        // const data = ctx.request.body;
+
+        // if (!_.isNill(password)) {
+        //     const passwordHash = await User.generatePassword(password);
+        //     data.password = passwordHash
+        // }
+
+        const header = ctx.request.header.authorization;
+        const token = header.split(" ")[1];
+        ctx.body = await User.putUser(ctx.request.body, token);
+    }
 };
 
 const getUser = {
-    path: "/user",
-    method: "GET",          
-    validate : {
-        headers: Joi.object( { 
-            'access_token': Joi.any().valid('application/json').required(),
-        }).unknown()
-    },
+    path:"/user",
+    method: "GET",
     async handler(ctx) {
-        console.log(ctx.request.body);
-       const user = await User.getUser(ctx.request.body);
-    //    ctx.body = user;
-    //     // ctx.body = await getPerson();
-    //     ctx.status = 201;
+        
+        if (_.isNil(ctx.user)) {
+            throw new ClientError("Unauthorization");
+        }
+
+        ctx.body = ctx.user;
     }
 };
 
 const updateUser = {
     path: "/users",
     method: "PUT",
-    validate : {
-        body : {
+    validate: {
+        body: {
             _id: Joi.string(),
             name: Joi.string(),
             email: Joi.string().email(),
@@ -146,40 +120,6 @@ async function exec(body) {
     } catch (e) {
         return e;
     }
-
-    console.log('await', result);
-    Person.create({ name: body.name, email: body.email }, (error1, newPerson) => {
-        if (error1) {
-            console.log("error1");
-            return handleError(error1);
-        }
-
-        Person.findById(newPerson._id, (error2, foundPerson) => {
-            if (error2) {
-                console.log("error2");
-                return handleError(error2);
-            }
-
-            // foundPerson.name = "yunjin";
-
-            foundPerson.save((error3, updatedPerson) => {
-                if (error3) {
-                    console.log("error3");
-                    return handleError(error3);
-                }
-
-                console.log('successfully saved person' + updatedPerson);
-                return Promise.resolve(updatedPerson);
-                // return updatedPerson;
-                // process.exit(0);
-            });
-        });
-    });
-}
-
-function handleError(error) {
-    console.error('Error' + error + error.stack);
-    // process.exit(2);
 }
 
 async function getPerson() {
@@ -209,29 +149,27 @@ async function deletePerson(id) {
 const signIn = {
     path: "/auth/login",
     method: "POST",
-    validate : {
-        body : {
+    validate: {
+        body: {
             email: Joi.string().email().required(),
             password: Joi.string().required(),
         },
         type: "json"
     },
 
-    async handler (ctx) {
-       const token = await User.signIn(ctx.request.body);
+    async handler(ctx) {
+        const access_token = await User.signIn(ctx.request.body);
 
-       
-       ctx.body = {
-           token,
-       };
+        ctx.body = {
+            access_token,
+        };
     }
-    
+
 }
 
 module.exports = [
     postUser,
+    putUser,
     getUser,
-    updateUser,
-    deleteUser,
     signIn
 ];

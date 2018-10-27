@@ -26,7 +26,7 @@ const User = new Schema({
         type: String,
     },
 
-    access_token : {
+    access_token: {
         type: String,
     }
 });
@@ -39,6 +39,13 @@ User.statics.findOneByEmail = async function (email) {
 
     return this.findOne({
         email
+    }).exec();
+}
+
+User.statics.findOneById = async function (_id) {
+
+    return this.findOne({
+        _id
     }).exec();
 }
 
@@ -55,7 +62,7 @@ User.statics.signUp = async function (data) {
     }
 
     const passwordHash = await bcrypt.hash(password, saltRounds);
-    
+
     const user = new this({
         ...data,
         password: passwordHash,
@@ -72,7 +79,6 @@ User.methods.verifyPassword = async function (password) {
     return bcrypt.compare(password, this.password);
     // 메소드로 만들었기 때문에 this는 user객체로 들어간다.
 }
-
 // 위의 메소드는 user 객체에 대해서 쓸 수 있는 메소드이다.
 
 // 아래 메소드는 User 모델에 대해서 쓸 수 있는 메소드이다.
@@ -92,16 +98,29 @@ User.statics.signIn = async function (data) {
         throw new ClientError("Invalid password");
     }
 
+    const access_token = await user.generateAccessToken();
+
+    return access_token;
+}
+
+User.methods.generateAccessToken = async function () {
     const accessToken = jwt.sign({
         data: {
-            user: user._id,
+            user: {
+                id: this._id,
+            },
         }
     }, jwtSecret, {
-        expiresIn: '1h'
-    });
+            expiresIn: '1h'
+        });
 
     return accessToken;
 }
+
+User.statics.generatePassword =  function (password) {
+    return  bcrypt.hash(password, saltRounds);
+}
+
 
 User.statics.findOneByAccessToken = async function (access_token) {
     return this.findOne({
@@ -109,20 +128,42 @@ User.statics.findOneByAccessToken = async function (access_token) {
     }).exec();
 }
 
-User.statics.getUser = async function (data) {
+User.statics.getUser = async function (token) {
+    const decoded = jwt.verify(token, jwtSecret);
+    const user = await this.findOneById(decoded.data.user.id);
+
+    return user;
+}
+
+User.statics.putUser = async function (data, token) {
+
     const {
-        access_token
+        password
     } = data;
 
-    console.log(access_token);
-    
-    const verified = await bcrypt.compare(access_token, this.access_token );
-    if (!verified) {
-        throw new ClientError("Invalid token")
+    let newPassword;
+    if (!_.isNil(password)) {
+        newPassword = await bcrypt.hash(password, saltRounds);
     }
 
-    const user = await this.findOneByAccessToken(access_token);
-    return user;
+    const object = {
+        ...data,
+        password: newPassword
+    }
+
+    let decoded;
+    try {
+        decoded = jwt.verify(token, jwtSecret);
+    } catch (err) {
+        throw new ClientError("Invalid token");
+    }
+
+    return this.findByIdAndUpdate(decoded.data.user.id, object, function (err, user) {
+        if (err) {
+            throw new NotFoundError("User not found");
+        }
+    });
+
 }
 
 module.exports = mongoose.model("User", User);

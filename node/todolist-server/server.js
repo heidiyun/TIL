@@ -16,6 +16,7 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 
+
 console.log(config);
 
 const app = new Koa();
@@ -30,11 +31,13 @@ const router = require("./routes");
 // 동적언어는 암묵적 약속
 
 const logHandler = require("./middlewares/logHandler");
+const authHandler = require("./middlewares/authHandler");
+
 app.use(logHandler({
     logger,
     // logger.js에서 설정한 logger를 전달해준다.
 }));
-
+app.use(authHandler());
 app.use(async (ctx, next) => {
     try {
         await next();

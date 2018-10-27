@@ -3,6 +3,7 @@ const apiRouter = router();
 const Joi = router.Joi;
 
 const userController = require('./controllers/user');
+const imageController = require('./controllers/image');
 
 apiRouter.get("/", (ctx) => {
     // throw new Error("what the fuck");
@@ -10,9 +11,9 @@ apiRouter.get("/", (ctx) => {
 });
 
 
-
 apiRouter.route([
-  ...userController
+  ...userController,
+  ...imageController
 ]);
 
 // apiRouter.post("/users",{
@@ -21,5 +22,6 @@ apiRouter.route([
 //         name: Joi.string().required(),
 //     }
 // } ,userController.postUser);
+
 
 module.exports = apiRouter;
