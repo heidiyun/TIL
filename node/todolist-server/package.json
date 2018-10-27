@@ -1,0 +1,30 @@
+{
+  "name": "todolist-server",
+  "version": "1.0.0",
+  "description": "Todo list server",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js | bunyan",
+    "publish": "NODE_ENV=production node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "YunJeong Goo",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "aws-sdk": "^2.344.0",
+    "bcrypt": "^3.0.2",
+    "bunyan": "^1.8.12",
+    "dotenv": "^6.0.0",
+    "humanize": "0.0.9",
+    "humanize-number": "0.0.2",
+    "jsonwebtoken": "^8.3.0",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-joi-router": "^5.1.0",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.3.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}
