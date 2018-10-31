@@ -6,6 +6,9 @@
     android:orientation="vertical"
     >
 
+    <include
+        layout="@layout/view_camera_and_title"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
