@@ -38,6 +38,7 @@ public class CrimeLab {
         CrimeCursorWrapper cursor = queryCrimes(null, null);
 
         try {
+
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 crimes.add(cursor.getCrime());
@@ -54,7 +55,7 @@ public class CrimeLab {
 
         CrimeCursorWrapper cursor = queryCrimes(
                 CrimeDbSchema.CrimeTable.Cols.UUID + " = ?",
-                new String[] { id.toString()}
+                new String[]{id.toString()}
         );
 
         try {
@@ -84,6 +85,7 @@ public class CrimeLab {
         values.put(CrimeDbSchema.CrimeTable.Cols.TITLE, crime.getmTitle());
         values.put(CrimeDbSchema.CrimeTable.Cols.DATE, crime.getmDate().getTime());
         values.put(CrimeDbSchema.CrimeTable.Cols.SOLVED, crime.ismSolved() ? 1 : 0);
+        values.put(CrimeDbSchema.CrimeTable.Cols.SUSPECT, crime.getmSuspect());
 
         return values;
     }
