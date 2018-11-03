@@ -3,6 +3,11 @@
           package="kr.ac.ajou.heidi.todolist">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                    />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+                    />
+
 
     <application
             android:allowBackup="true"
@@ -28,10 +33,11 @@
 
                 <data
                         android:pathPrefix="/users"
-                        android:host="10.0.2.2"
+                        android:host="192.168.219.105"
                         android:scheme="http" />
             </intent-filter>
         </activity>
+        <activity android:name=".ImageActivity" />
     </application>
 
 </manifest>

@@ -1,47 +1,52 @@
 package kr.ac.ajou.heidi.todolist
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("_id", "5bca06b12b7feb112ba59a1e")
-//        jsonObject.addProperty("name", "heidiyun")
-//        jsonObject.addProperty("email", "heidiyun@naver.com")
-
-        button.setOnClickListener {view ->
-
-            val call = mongoApi.getUserInfo()
-            call.enqueue(object : Callback<Array<CreatedUserInfo>> {
-                override fun onFailure(call: Call<Array<CreatedUserInfo>>, t: Throwable) {
-                    Log.i("MainActivity", t.message)
-                }
-
-                override fun onResponse(call: Call<Array<CreatedUserInfo>>, response: Response<Array<CreatedUserInfo>>) {
-                    val result = response.body()
-                    result?.let {
-                        Log.i("MainActivity", "hihih")
-//                        runOnUiThread {
-//                            nameText.text = it.name
-//                            emailText.text = it.email
-//                        }
-                    }
-                }
-
-            })
-
+        signInButton.setOnClickListener {
+            signIn()
         }
+    }
 
+    private fun createBody(): JsonObject {
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("email", emailEditText.text.toString())
+        jsonObject.addProperty("password", passwordEditText.text.toString())
+        return jsonObject
+    }
+
+    private fun signIn() {
+        val call = mongoApi.getAccessToken(createBody())
+        call.enqueue(object : Callback<Auth> {
+            override fun onFailure(call: Call<Auth>, t: Throwable) {
+                Log.e(TAG, t.localizedMessage)
+            }
+
+            override fun onResponse(call: Call<Auth>, response: Response<Auth>) {
+                val result = response.body()
+                result?.let {
+                        result ->
+                    updateToken(this@MainActivity, result.accessToken)
+                    startActivity<ImageActivity>()
+                }
+            }
+        })
     }
 }
