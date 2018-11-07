@@ -19,7 +19,8 @@ import kr.ac.ajou.heidi.criminalintentj.R;
 import kr.ac.ajou.heidi.criminalintentj.model.Crime;
 import kr.ac.ajou.heidi.criminalintentj.model.CrimeLab;
 
-public class CrimePagerActivity extends AppCompatActivity {
+public class CrimePagerActivity extends AppCompatActivity
+        implements CrimeFragment.Callbacks {
 
     private static final String EXTRA_CRIME_ID =
             "kr.ac.ajou.heidi.crime.crime_id";
@@ -61,5 +62,10 @@ public class CrimePagerActivity extends AppCompatActivity {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeId);
         return intent;
+    }
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+
     }
 }
