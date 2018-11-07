@@ -6,12 +6,13 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_crime_pager.*
 import kr.ac.ajou.heidi.criminalintentk.R
 import kr.ac.ajou.heidi.criminalintentk.model.CrimeLab
 import java.util.*
 
-class CrimePagerActivity : FragmentActivity() {
+class CrimePagerActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_CRIME_ID = "kr.ac.ajou.heidi.crime_id"
@@ -25,8 +26,6 @@ class CrimePagerActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crime_pager)
-
-
 
         val crimeId = intent.getSerializableExtra(EXTRA_CRIME_ID)
 

@@ -1,6 +1,7 @@
 package kr.ac.ajou.heidi.criminalintentk.controller
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
@@ -8,6 +9,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
+import kotlinx.android.synthetic.main.fragment_crime.*
 import kotlinx.android.synthetic.main.fragment_crime.view.*
 import kr.ac.ajou.heidi.criminalintentk.R
 import kr.ac.ajou.heidi.criminalintentk.model.Crime
@@ -26,6 +29,9 @@ class CrimeFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+
+        const val DIALOG_DATE = "DialogDate"
+        const val REQUEST_DATE = 0
     }
 
     lateinit var crime: Crime
@@ -54,20 +60,44 @@ class CrimeFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 crime.title = s.toString()
             }
-
         })
 
-        view.crimeDate.text = dateFormat.format(crime.date)
-        view.crimeDate.isEnabled = false
+        view.crimeDateButton.text = dateFormat.format(crime.date)
+
+        view.crimeDateButton.setOnClickListener {
+            val dialog = DatePickerFragment.newInstance(crime.date)
+            dialog.setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+            dialog.show(fragmentManager, DIALOG_DATE)
+
+        }
+
         view.crimeSolved.isChecked = crime.solved
 
-        view.crimeSolved.setOnCheckedChangeListener { buttonView, isChecked -> crime.solved = isChecked }
+        view.crimeSolved.setOnCheckedChangeListener { _, isChecked ->
+            crime.solved = isChecked
+        }
 
+        returnResult()
 
         return view
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK)
+            return
+
+        if (requestCode == REQUEST_DATE) {
+            val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE)
+            crime.date = date as Date
+            updateDate()
+        }
+    }
+
     fun returnResult() {
         activity?.setResult(Activity.RESULT_OK, null)
+    }
+
+    private fun updateDate() {
+        crimeDateButton.text = dateFormat.format(crime.date)
     }
 }

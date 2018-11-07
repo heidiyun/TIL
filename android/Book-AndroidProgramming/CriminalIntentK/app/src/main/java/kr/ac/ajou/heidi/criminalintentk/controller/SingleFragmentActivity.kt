@@ -1,14 +1,12 @@
 package kr.ac.ajou.heidi.criminalintentk.controller
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatActivity
 import kr.ac.ajou.heidi.criminalintentk.R
-import java.util.*
 
-abstract class SingleFragmentActivity: FragmentActivity() {
+abstract class SingleFragmentActivity: AppCompatActivity() {
 
     abstract fun createFragment(): Fragment
 

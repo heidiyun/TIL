@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import kr.ac.ajou.heidi.criminalintentk.R
 import java.util.*
 
+
 class CrimeActivity : SingleFragmentActivity() {
     override fun createFragment(): Fragment {
         val crimeId = intent.getSerializableExtra(EXTRA_CRIME_ID) as UUID

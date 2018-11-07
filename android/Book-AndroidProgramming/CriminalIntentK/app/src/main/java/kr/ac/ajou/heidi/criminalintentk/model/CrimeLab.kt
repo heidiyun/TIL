@@ -19,12 +19,7 @@ class CrimeLab private constructor() {
     }
 
     init {
-        for (i in 0..100) {
-            val crime = Crime()
-            crime.title = "범죄 # $i"
-            crime.solved = i % 2 == 0
-            crimes.add(crime)
-        }
+
     }
 
     fun getCrime(id: UUID): Crime? {
@@ -34,6 +29,10 @@ class CrimeLab private constructor() {
             }
         }
         return null
+    }
+
+    fun addCrime(c: Crime) {
+        crimes.add(c)
     }
 
 
