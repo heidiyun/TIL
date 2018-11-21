@@ -1,7 +1,6 @@
 package kr.ac.ajou.heidi.beatbox
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +34,13 @@ class BeatBoxFragment : Fragment() {
         view.fragmentBeatBoxRecyclerView.layoutManager = GridLayoutManager(activity?.applicationContext!!, 3)
         recyclerViewAdapter.sounds = beatBox.sounds
         view.fragmentBeatBoxRecyclerView.adapter = recyclerViewAdapter
+
+        val theme = activity?.theme ?: return view
+        val attrsToFetch: IntArray = intArrayOf(R.attr.colorAccent)
+        val typedArray = theme.obtainStyledAttributes(R.style.AppTheme, attrsToFetch)
+        val accentColor  = typedArray.getInt(0,0)
+
+
 
         return view
     }

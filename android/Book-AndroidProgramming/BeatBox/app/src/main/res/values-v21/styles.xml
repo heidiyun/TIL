@@ -12,12 +12,9 @@
 
     </style>
 
-    <style name="BeatBoxButton" parent="android:style/Widget.Holo.Button">
+    <style name="BeatBoxButton" parent="android:style/Widget.Material.Button">
         <item name="android:background">@drawable/button_beat_box</item>
     </style>
 
-    <!--<style name="StyleBeatBoxButton" parent="@style/BeatBoxButton">-->
-        <!--<item name="android:textStyle">bold</item>-->
-    <!--</style>-->
 
 </resources>
