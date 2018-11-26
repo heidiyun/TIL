@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_photo_gallery.view.*
+import kotlinx.android.synthetic.main.gallery_item.view.*
 import kotlinx.android.synthetic.main.list_item_photo_gallery.view.*
 
 class PhotoGalleryFragment : Fragment() {
@@ -34,7 +36,7 @@ class PhotoGalleryFragment : Fragment() {
 
     inner class PhotoHolder(parent: ViewGroup) :
             RecyclerView.ViewHolder(LayoutInflater.from(parent.context)
-                    .inflate(R.layout.list_item_photo_gallery, parent, false))
+                    .inflate(R.layout.gallery_item, parent, false))
 
     inner class PhotoAdapter : RecyclerView.Adapter<PhotoHolder>() {
 
@@ -47,7 +49,9 @@ class PhotoGalleryFragment : Fragment() {
         override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
             val galleryItem = galleryItems[position]
             with(holder.itemView) {
-                photoTextView.text = galleryItem.toString()
+                val placeholder = ContextCompat.getDrawable(context, R.drawable.bill_up_close)
+                fragmentPhotoGalleryImageView.setImageDrawable(placeholder)
+                thumbnailDownloader.queueThumbnail(holder, galleryItem.url)
             }
         }
 
@@ -63,11 +67,15 @@ class PhotoGalleryFragment : Fragment() {
 
     var items = ArrayList<GalleryItem>()
     val adapter = PhotoAdapter()
+    val thumbnailDownloader = ThumbnailDownloader<PhotoHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
         FetchItemsTask().execute()
+        thumbnailDownloader.start()
+        thumbnailDownloader.looper
+        Log.i(TAG, "Background thread started")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -80,6 +88,12 @@ class PhotoGalleryFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        thumbnailDownloader.quit()
+        Log.i(TAG, "Background thread destroyed")
     }
 
 }
