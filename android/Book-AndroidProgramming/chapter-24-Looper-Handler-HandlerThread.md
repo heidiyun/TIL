@@ -84,4 +84,45 @@ val placeholder = ContextCompat.getDrawable(/context/, R.drawable./bill_up_close
 ```
 PhotoAdapter.onBindViewHolder(…)에서 ThumbnailDownloader 스레드의 queueThumbnail() 메서드를 호출하도록 변경한다.
 
+## 메시지와 메시지 핸들러
+### 메시지 구조
+Message는 인스턴스이며, 필드를 가진다.
+
+1. what : 메시지를 나타내는 사용자 정의 정수 값
+2. obj :  메시지와 함께 전달되는 사용자 지정 객체
+3. target : 메시지를 처리할 Handler
+
+Message를 생성하면 자동으로 Handler에 연결된다.
+Message가 처리될 준비가 되면 Handler가 message를 담당하는 객체가 된다.
+
+### 핸들러 구조
+메시지를 사용해서 실제 작업을 하려면 Handler의 인스턴스가 필요하다.
+Handler는 Message를 처리하는 대상일 뿐만 아니라 Message를 생성하고 게시하는 인터페이스의 역할도 한다.
+
+**Message는 반드시 Looper로부터 게시되고 사용되어야 한다.**
+Looper는 Message 객체들의 메시지 수신함을 소유하기 때문이다.
+그래서 항상 Handler는 항상 자신의 동료인 Looper의 참조를 갖는다.
+
+**Handler는 하나의 Looper에 연결된다.**
+Message는 하나의 목표 Handler에 연결된다.
+
+다수의 Message들이 동일한 대상 Handler를 참조할 수 있다.
+다수의 Handler가 하나의 Looper에 연결될 수 있다.
+
+### 핸들러 사용하기
+Message를 처리하는 대상 Handler는 사용자가 직접 설정하지 않는다.
+Message는 Handler.obtainMessage(…)를 사용하여 생성하는 것이 좋다.
+이때 다른 메시지 필드들을 인자로 전달하면 이 메서드가 호출된 Handler 객체를 대상 핸들러로 설정해준다.
+
+Message는 Handler.obtainMessage(…)는 매번 새로운 Message 객체의 생성을 피하기 위해 공유되는 재활용 풀에서 Message 객체를 가져다 사용한다.
+
+Message 객체를 얻고 Handler에 전달하기 위해서 sendToTarget()을 호출한다.
+Handler는 전달받은 Message를 Looper의 메시지 큐 끝에 넣는다.
+
+PhotoGallery의 queueThumbnail() 메소드 내부에서 메시지 객체를 얻은 후 대상 핸들러에 전달할 것이다. 
+이때 메시지의 what 필드는 MESSAGE_DOWNLOAD로 정의된 상수가 될 것이다. 
+obj 필드는 다운로드를 식별하는데 사용될 T 타입의 객체가 될 것이다.
+애플리케이션에서는 adapter가 queueThumbnail()에 인자로 전달한 PhotoHolder 객체가 obj 필드 값이 된다.
+
+
 #android/책
