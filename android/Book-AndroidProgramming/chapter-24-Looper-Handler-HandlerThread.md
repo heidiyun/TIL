@@ -124,5 +124,16 @@ PhotoGallery의 queueThumbnail() 메소드 내부에서 메시지 객체를 얻�
 obj 필드는 다운로드를 식별하는데 사용될 T 타입의 객체가 될 것이다.
 애플리케이션에서는 adapter가 queueThumbnail()에 인자로 전달한 PhotoHolder 객체가 obj 필드 값이 된다.
 
+## AsyncTask vs Threads
+AsyncTask는 짧은 시간에 처리되면서 많이 반복되지 않는 작업에 적합하게 설계되었다.
+그러나 객체를 많이 생성하거나 , 긴 시간 동안 실행하는 것에는 적합하지 않다.
+
+안드로이드 3.2부터는 AsyncTask 인스턴스가 별개의 스레드로 생성되지 않는다.
+대신에 Executor를 사용해서 하나의 백그라운드 스레드에서 모든 AsyncTask 인스턴스의 백그라운드 작업을 실행한다.
+즉, 각 AsyncTask 인스턴스가 번갈아 실행된다는 것이다.
+결과적으로 오래 실행되는 AsyncTask 인스턴스는 다른 AsyncTask 인스턴스가 CPU 시간을 얻지 못하게 방해한다.
+
+스레드 풀 Executor를 사용하면 여러 AsyncTask 인스턴스를 안전하게 병행으로 실행할 수 있으나 권장하지 않는다.
+
 
 #android/책
