@@ -40,9 +40,6 @@ res_new_Image Asset
 ```java
 public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 // 메뉴를 생성하는 메소드.
-
-public boolean onOptionsItemSelected(MenuItem item)
-// 액션 항목 선택에 응답하는 메소드.
 ```
 
 호스팅 액티비티가 운영체제로부터 onCreateOptionsMenu(…)를 호출 받았을 때  FragmentManager는 Fragmnet.onCreateOptionsMenu(Menu, MenuInflater)를 호출하는 책임을 갖는다. 
@@ -51,6 +48,46 @@ public boolean onOptionsItemSelected(MenuItem item)
 public void setHasOptionsMenu(boolean hasMenu)
 ```
 
+### 메뉴 선택에 응답하기
 
+```java
+public boolean onOptionsItemSelected(MenuItem item)
+// 액션 항목 선택에 응답하는 메소드.
+```
+
+어떤 액션 항목이 선택되었는지는 MenuItem의 ID를 통해 확인할 수 있다. 
+(menu 파일의 resource ID와 일치한다.)
+
+## 계층적 내비게이션 활성화하기
+Back button -> 일시적 내비게이션 (직전의 화면으로 이동함)
+Up button -> 계층적 내비게이션 (현재 화면 위로 이동한다.)
+
+```xml
+<activity android:name=".controller.CrimePagerActivity"    android:parentActivityName=".controller.CrimeListActivity"/>
+// up button을 클릭하였을 때, 이동하는 액티비티를 지정한다.
+// up button 활성화.
+```
+
+### 계층적 내비게이션의 동작 방법
+CriminalIntentJ에서 up button을 누르면 다음과 같은 인텐트가 생성된다.
+```java
+Intent intent = new Intent(this, CrimekListActivity.class);
+intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+startActivity(intent);
+finish();
+```
+
+**FLAG_ACTIVITY_CLEAR_TOP**
+액티비티 스택에  사용하고자하는 기존 액티비티 인스턴스가 있다면 해당 액티비티 인스턴스가 스택의 가장 위에 올라올 수 있도록 모든 다른 액티비티를 스택에서 꺼낸다.
+
+0 -> 1 -> 2 -> 3 
+Up button으로 3 액티비티에서 1 액티비티를 시작시키면
+
+0 -> 1 -> 2 -> 3 -> 1 이 아니라, 
+0 -> 1 이 된다.
+
+## 툴바 vs 액션바
+([TIL/Toolbar.md at master · heidiyun/TIL · GitHub](https://github.com/heidiyun/TIL/blob/master/android/android_basic/Toolbar.md)
+참고하세요.
 
 #android/책
