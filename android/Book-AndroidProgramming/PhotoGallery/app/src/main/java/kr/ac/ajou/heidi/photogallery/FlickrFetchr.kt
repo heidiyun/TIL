@@ -12,7 +12,17 @@ import java.net.URL
 class FlickrFetchr {
     companion object {
         val TAG = FlickrFetchr::class.java.name.toString()
-        val API_KEY = "63f4169b8ce5d7a34d72ac1ba898448a"
+        const val API_KEY = "63f4169b8ce5d7a34d72ac1ba898448a"
+        const val FETCH_RECENTS_METHOD = "flickr.photos.getRecent"
+        const val SEARCH_METHOD = "flickr.photos.search"
+        val ENDPOINT = Uri.parse("https://api.flickr.com/services/rest/")
+            .buildUpon()
+            .appendQueryParameter("api_key", API_KEY)
+            .appendQueryParameter("format", "json")
+            .appendQueryParameter("nojsoncallback", "1")
+            .appendQueryParameter("extras", "url_s")
+            .build()
+
     }
 
     @Throws(IOException::class)
@@ -50,19 +60,11 @@ class FlickrFetchr {
         return String(getUrlBytes(urlSpec))
     }
 
-    fun fetchItems(): ArrayList<GalleryItem> {
+    fun downloadGalleryItems(url: String): ArrayList<GalleryItem> {
 
         val items = arrayListOf<GalleryItem>()
 
         try {
-            val url = Uri.parse("https://api.flickr.com/services/rest/")
-                    .buildUpon()
-                    .appendQueryParameter("method", "flickr.photos.getRecent")
-                    .appendQueryParameter("api_key", API_KEY)
-                    .appendQueryParameter("format", "json")
-                    .appendQueryParameter("nojsoncallback", "1")
-                    .appendQueryParameter("extras", "url_s")
-                    .build().toString()
             val jsonString = getUrlString(url)
             Log.i(TAG, "Received Json: $jsonString")
             val jsonBody = JSONObject(jsonString)
@@ -95,5 +97,24 @@ class FlickrFetchr {
             item.url = photoJsonObject.getString("url_s")
             items.add(item)
         }
+    }
+
+    private fun buildUrl(method: String, query: String): String {
+        val uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("method", method)
+
+        if (method.equals(SEARCH_METHOD)) {
+            uriBuilder.appendQueryParameter("text", query)
+        }
+        return uriBuilder.build().toString()
+    }
+
+    fun fetchRecentPhotos(): ArrayList<GalleryItem> {
+        val url = buildUrl(FETCH_RECENTS_METHOD, "")
+        return downloadGalleryItems(url)
+    }
+
+    fun searchPhotos(query: String): ArrayList<GalleryItem> {
+        val url = buildUrl(SEARCH_METHOD, query)
+        return downloadGalleryItems(url)
     }
 }

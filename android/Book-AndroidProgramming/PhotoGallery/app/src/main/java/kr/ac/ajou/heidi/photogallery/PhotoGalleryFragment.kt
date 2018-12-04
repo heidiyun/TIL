@@ -7,9 +7,8 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,10 +18,12 @@ import kotlinx.android.synthetic.main.gallery_item.view.*
 
 class PhotoGalleryFragment : Fragment() {
 
-    inner class FetchItemsTask : AsyncTask<Void, Void, ArrayList<GalleryItem>>() {
+    inner class FetchItemsTask(val query: String?) : AsyncTask<Void, Void, ArrayList<GalleryItem>>() {
 
         override fun doInBackground(vararg params: Void?): ArrayList<GalleryItem> {
-            return FlickrFetchr().fetchItems()
+
+            return if (query == null) FlickrFetchr().fetchRecentPhotos()
+            else FlickrFetchr().searchPhotos(query)
         }
 
         override fun onPostExecute(result: ArrayList<GalleryItem>?) {
@@ -30,23 +31,22 @@ class PhotoGalleryFragment : Fragment() {
             adapter.galleryItems = items
             adapter.notifyDataSetChanged()
         }
-
-        override fun onProgressUpdate(vararg values: Void?) {
-            super.onProgressUpdate(*values)
-        }
-
     }
 
     inner class PhotoHolder(parent: ViewGroup) :
-            RecyclerView.ViewHolder(LayoutInflater.from(parent.context)
-                    .inflate(R.layout.gallery_item, parent, false))
+        RecyclerView.ViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.gallery_item, parent, false)
+        )
 
     inner class PhotoAdapter : RecyclerView.Adapter<PhotoHolder>() {
 
         var galleryItems = emptyList<GalleryItem>()
         var drawable: Drawable? = null
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoHolder = PhotoHolder(parent)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoHolder {
+            return PhotoHolder(parent)
+        }
 
         override fun getItemCount(): Int = galleryItems.size
 
@@ -71,17 +71,18 @@ class PhotoGalleryFragment : Fragment() {
 
     var items = ArrayList<GalleryItem>()
     val adapter = PhotoAdapter()
-    var thumbnailDownloader : ThumbnailDownloader<PhotoHolder>? = null
+    var thumbnailDownloader: ThumbnailDownloader<PhotoHolder>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        FetchItemsTask().execute()
+        setHasOptionsMenu(true)
+        updateItems()
 
         val responseHandler = Handler()
         thumbnailDownloader = ThumbnailDownloader(responseHandler)
         thumbnailDownloader?.setThumbnailDownloaderListener(
-            object: ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder> {
+            object : ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder> {
                 override fun onThumbnailDownloaded(target: PhotoHolder, thumbnail: Bitmap) {
                     val drawable = BitmapDrawable(resources, thumbnail)
                     adapter.drawable = drawable
@@ -106,6 +107,49 @@ class PhotoGalleryFragment : Fragment() {
         return view
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(R.menu.fragment_photo_gallery, menu)
+
+        val searchItem = menu?.findItem(R.id.menu_item_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                QueryPreferences.setStoredQuery(view?.context ?: return false, query ?: "")
+                updateItems()
+                searchView.isIconified = true
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+
+        searchView.setOnSearchClickListener(View.OnClickListener {
+            val query = QueryPreferences.getStoredQuery(view?.context ?: return@OnClickListener)
+            searchView.setQuery(query, false)
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.menu_item_clear -> {
+                QueryPreferences.setStoredQuery(view?.context ?: return false, null)
+                updateItems()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun updateItems() {
+        val query = QueryPreferences.getStoredQuery(view?.context ?: return)
+        FetchItemsTask(query).execute()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         thumbnailDownloader?.clearQueue()
@@ -116,5 +160,6 @@ class PhotoGalleryFragment : Fragment() {
         thumbnailDownloader?.quit()
         Log.i(TAG, "Background thread destroyed")
     }
+
 
 }

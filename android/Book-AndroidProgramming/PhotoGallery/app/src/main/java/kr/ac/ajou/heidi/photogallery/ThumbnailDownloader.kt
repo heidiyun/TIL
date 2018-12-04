@@ -42,6 +42,18 @@ class ThumbnailDownloader<T>(val responseHandler: Handler) : HandlerThread(TAG) 
         }
     }
 
+    fun queueThumbnail(target: T, url: String?) {
+        Log.i(TAG, "Got a URL: $url")
+
+        if (url == null) {
+            requestMap.remove(target)
+        } else {
+            requestMap[target] = url
+            requestHandler?.obtainMessage(MESSAGE_DOWNLOAD, target)?.sendToTarget()
+
+        }
+    }
+
     private fun handleRequest(target: T) {
         try {
             val url = requestMap[target] ?: return
@@ -64,15 +76,4 @@ class ThumbnailDownloader<T>(val responseHandler: Handler) : HandlerThread(TAG) 
         requestHandler?.removeMessages(MESSAGE_DOWNLOAD)
     }
 
-    fun queueThumbnail(target: T, url: String?) {
-        Log.i(TAG, "Got a URL: $url")
-
-        if (url == null) {
-            requestMap.remove(target)
-        } else {
-            requestMap[target] = url
-            requestHandler?.obtainMessage(MESSAGE_DOWNLOAD, target)?.sendToTarget()
-
-        }
-    }
 }
