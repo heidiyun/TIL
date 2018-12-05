@@ -98,6 +98,10 @@ class PhotoGalleryFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_photo_gallery, container, false)
 
+//            val intent = PollService.newIntent(view.context)
+//            activity?.startService(intent)
+//        PollService.setServiceAlarm(view.context, true)
+
         view.fragmentPhotoGalleryRecyclerView.layoutManager = GridLayoutManager(view.context, 3)
         adapter.galleryItems = items
         if (isAdded) {
@@ -132,6 +136,13 @@ class PhotoGalleryFragment : Fragment() {
             val query = QueryPreferences.getStoredQuery(view?.context ?: return@OnClickListener)
             searchView.setQuery(query, false)
         })
+
+        val toggleItem = menu.findItem(R.id.menu_item_toggle_polling)
+        if (PollService.isServiceAlarmOn(activity ?: return)) {
+            toggleItem.setTitle(R.string.stop_polling)
+        } else {
+            toggleItem.setTitle(R.string.start_polling)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -139,6 +150,14 @@ class PhotoGalleryFragment : Fragment() {
             R.id.menu_item_clear -> {
                 QueryPreferences.setStoredQuery(view?.context ?: return false, null)
                 updateItems()
+                return true
+            }
+            R.id.menu_item_toggle_polling -> {
+                view?.context?.let {
+                    val shouldStartAlarm = !PollService.isServiceAlarmOn(it)
+                    PollService.setServiceAlarm(it, shouldStartAlarm)
+                    activity?.invalidateOptionsMenu()
+                }
                 return true
             }
             else -> super.onOptionsItemSelected(item)
