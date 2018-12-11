@@ -1,13 +1,14 @@
 package kr.ac.ajou.heidi.photogallery
 
-import android.app.AlarmManager
-import android.app.IntentService
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.app.NotificationCompat
 
 class PollService : IntentService(TAG) {
     companion object {
@@ -56,7 +57,34 @@ class PollService : IntentService(TAG) {
 
         val resultId = items[0].id
         if (resultId == lastResultId) Log.i(TAG, "Got an old result: $resultId")
-        else Log.i(TAG, "Got a new result: $resultId")
+        else {
+            Log.i(TAG, "Got a new result: $resultId")
+            val newIntent = PhotoGalleryActivity.newIntent(this)
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                val notificationChannel =
+                    NotificationChannel("photogallery", "photogallery", NotificationManager.IMPORTANCE_DEFAULT)
+                notificationChannel.enableLights(true)
+                notificationChannel.lightColor = Color.GREEN
+                notificationChannel.enableVibration(true)
+                notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+                notificationManager.createNotificationChannel(notificationChannel)
+                val builder = Notification.Builder(this, "photogallery")
+                    .setContentTitle("got a new picture")
+                    .setContentText("새로운 사진을 확인하세요.")
+                    .setSmallIcon(R.drawable.notification_icon_background)
+                    .setAutoCancel(true)
+                    .build()
+                notificationManager.notify(0, builder)
+            } else {
+                val pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0)
+                val notification = NotificationCompat.Builder(this)
+            }
+
+
+        }
 
         QueryPreferences.setLastResultId(this, resultId)
     }

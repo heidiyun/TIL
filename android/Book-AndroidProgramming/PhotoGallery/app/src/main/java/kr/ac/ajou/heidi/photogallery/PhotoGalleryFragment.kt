@@ -130,6 +130,7 @@ class PhotoGalleryFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
+
         })
 
         searchView.setOnSearchClickListener(View.OnClickListener {
@@ -154,6 +155,7 @@ class PhotoGalleryFragment : Fragment() {
             }
             R.id.menu_item_toggle_polling -> {
                 view?.context?.let {
+                    Log.i(TAG, "menu view")
                     val shouldStartAlarm = !PollService.isServiceAlarmOn(it)
                     PollService.setServiceAlarm(it, shouldStartAlarm)
                     activity?.invalidateOptionsMenu()
