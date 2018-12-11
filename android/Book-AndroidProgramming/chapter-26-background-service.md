@@ -121,4 +121,42 @@ val pendingIntent = PendingIntent
 
 FLAT_NO_CREATE를 전달하면 PendingIntent의 존재 여부를 확인하여 존재하지 않으면 null을 반환한다.
 
-#android/
+## 통지(알림)
+> 백그라운드 서비스가 사용자와 소통할 필요가 있을 때 통지(notification)을 사용한다.  
+
+ 통지는 상태바 밑에 나타나는 통지함(notification drawer)에 나타나는 항목이다.
+
+### 사용
+Notification 객체를 사용한다.
+Builder 객체를 사용하여 생성한다.
+* ticker text : 안드로이드 롤리팝(5.0) 이전 장치에서는 통지가 최초로 보여질 때 상태 바에 나타난다. 
+롤리팝 이후 장치에서는 상태바에 텍스트가 나타나지 않는다.
+* icon : 상태바에 나타난다.
+롤리팝 이전 장치에서는 ticker text가 없어진 후 상태 바에 나타난다.
+* view : 통지를 통지함에 보여준다.
+* pendingIntent : 사용자가 통지함의 통지를 눌렀을 때 발생되는 인텐트
+
+안드로이드 오레오(8.0) 이후부터는 NotificationChannel을 등록해주어야 한다.
+
+```kotlin
+val notificationChannel =
+    NotificationChannel("photogallery", "photogallery", NotificationManager./IMPORTANCE_DEFAULT/)
+notificationChannel.enableLights(true)
+notificationChannel./lightColor/= Color./GREEN/
+notificationChannel.enableVibration(true)
+notificationChannel./lockscreenVisibility/= Notification./VISIBILITY_PRIVATE/
+notificationManager.createNotificationChannel(notificationChannel)
+val builder = Notification.Builder(this, "photogallery")
+    .setContentTitle("got a new picture")
+    .setContentText("새로운 사진을 확인하세요.")
+    .setSmallIcon(R.drawable./notification_icon_background/)
+    .setAutoCancel(true)
+    .build()
+notificationManager.notify(0, builder)
+
+```
+
+
+
+
+#android/책
