@@ -31,6 +31,7 @@ class PollService : IntentService(TAG) {
                 alarmManager.cancel(pendingIntent)
                 pendingIntent.cancel()
             }
+            QueryPreferences.setAlarmOn(context, isOn)
         }
 
         fun isServiceAlarmOn(context: Context): Boolean {
