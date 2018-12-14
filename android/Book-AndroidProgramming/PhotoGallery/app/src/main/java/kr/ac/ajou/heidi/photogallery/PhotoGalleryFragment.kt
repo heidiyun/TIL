@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_photo_gallery.view.*
 import kotlinx.android.synthetic.main.gallery_item.view.*
 
-class PhotoGalleryFragment : Fragment() {
+class PhotoGalleryFragment : VisibleFragment() {
 
     inner class FetchItemsTask(val query: String?) : AsyncTask<Void, Void, ArrayList<GalleryItem>>() {
 

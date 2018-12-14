@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="kr.ac.ajou.heidi.photogallery">
+          xmlns:tools="http://schemas.android.com/tools" package="kr.ac.ajou.heidi.photogallery">
+
+    <permission android:name="kr.ac.ajou.heidi.photogallery.PRIVATE"
+                android:protectionLevel="signature"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="kr.ac.ajou.heidi.photogallery.PRIVATE"/>
 
     <application
             android:allowBackup="true"
@@ -12,7 +16,8 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".PhotoGalleryActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -24,6 +29,14 @@
         <receiver android:name=".StartupReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".NotificationReceiver"
+                  android:exported="false">
+            <intent-filter
+                android:priority="-999">
+                <action
+                    android:name="kr.ac.ajou.heidi.photogallery.SHOW_NOTIFICATION"/>
             </intent-filter>
         </receiver>
     </application>

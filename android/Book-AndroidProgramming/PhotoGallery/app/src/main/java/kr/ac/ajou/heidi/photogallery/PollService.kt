@@ -13,7 +13,11 @@ import androidx.core.app.NotificationCompat
 class PollService : IntentService(TAG) {
     companion object {
         const val TAG = "PollService"
-        const val POLL_INTERVAL = 1000 * 60L
+        const val POLL_INTERVAL = 1000 * 10L
+        const val ACTION_SHOW_NOTIFICATION = "kr.ac.ajou.heidi.photogallery.SHOW_NOTIFICATION"
+        const val PERM_PRIVATE = "kr.ac.ajou.heidi.photogallery.PRIVATE"
+        const val REQUEST_CODE = "REQUEST_CODE"
+        const val NOTIFICATION = "NOTIFICATION"
 
         fun newIntent(context: Context): Intent = Intent(context, PollService::class.java)
 
@@ -78,7 +82,10 @@ class PollService : IntentService(TAG) {
                     .setSmallIcon(R.drawable.notification_icon_background)
                     .setAutoCancel(true)
                     .build()
-                notificationManager.notify(0, builder)
+//                notificationManager.notify(0, builder)
+                showBackgroundNotification(0, builder)
+                sendBroadcast(Intent(ACTION_SHOW_NOTIFICATION), PERM_PRIVATE)
+
             } else {
                 val pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0)
                 val notification = NotificationCompat.Builder(this)
@@ -88,6 +95,13 @@ class PollService : IntentService(TAG) {
         }
 
         QueryPreferences.setLastResultId(this, resultId)
+    }
+
+    private fun showBackgroundNotification(requestCode: Int, notification: Notification) {
+        val intent = Intent(ACTION_SHOW_NOTIFICATION)
+        intent.putExtra(REQUEST_CODE, requestCode)
+        intent.putExtra(NOTIFICATION, notification)
+        sendOrderedBroadcast(intent, PERM_PRIVATE, null, null, Activity.RESULT_OK, null, null)
     }
 
     private fun isNetworkAvailableAndConnected(): Boolean {
