@@ -24,8 +24,5 @@ class NotificationReceiver : BroadcastReceiver() {
             val notificationManager = NotificationManagerCompat.from(it)
             notificationManager.notify(requestCode, notification)
         }
-
-
     }
-
 }

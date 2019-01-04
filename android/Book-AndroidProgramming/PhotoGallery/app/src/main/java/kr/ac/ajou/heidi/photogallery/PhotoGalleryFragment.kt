@@ -1,5 +1,6 @@
 package kr.ac.ajou.heidi.photogallery
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -34,10 +35,10 @@ class PhotoGalleryFragment : VisibleFragment() {
     }
 
     inner class PhotoHolder(parent: ViewGroup) :
-        RecyclerView.ViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.gallery_item, parent, false)
-        )
+            RecyclerView.ViewHolder(
+                    LayoutInflater.from(parent.context)
+                            .inflate(R.layout.gallery_item, parent, false)
+            )
 
     inner class PhotoAdapter : RecyclerView.Adapter<PhotoHolder>() {
 
@@ -57,6 +58,14 @@ class PhotoGalleryFragment : VisibleFragment() {
                 fragmentPhotoGalleryImageView.setImageDrawable(placeholder)
                 thumbnailDownloader?.queueThumbnail(holder, galleryItem.url)
                 fragmentPhotoGalleryImageView.setImageDrawable(drawable)
+                this.setOnClickListener {
+                    activity?.applicationContext?.let { context ->
+                        val intent = PhotoPageActivity.newIntent(context, galleryItem.getPhotoPageUri())
+                        startActivity(intent)
+                    }
+
+
+                }
             }
         }
     }
@@ -82,12 +91,12 @@ class PhotoGalleryFragment : VisibleFragment() {
         val responseHandler = Handler()
         thumbnailDownloader = ThumbnailDownloader(responseHandler)
         thumbnailDownloader?.setThumbnailDownloaderListener(
-            object : ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder> {
-                override fun onThumbnailDownloaded(target: PhotoHolder, thumbnail: Bitmap) {
-                    val drawable = BitmapDrawable(resources, thumbnail)
-                    adapter.drawable = drawable
+                object : ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder> {
+                    override fun onThumbnailDownloaded(target: PhotoHolder, thumbnail: Bitmap) {
+                        val drawable = BitmapDrawable(resources, thumbnail)
+                        adapter.drawable = drawable
+                    }
                 }
-            }
         )
 
         thumbnailDownloader?.start()

@@ -38,7 +38,6 @@ class FlickrFetchr {
                 throw IOException("${connection.responseMessage}:with $urlSpec")
             }
 
-
             val buffer = ByteArray(1024)
             var bytesRead = inputStream.read(buffer)
             while (bytesRead > 0) {
@@ -95,6 +94,7 @@ class FlickrFetchr {
             }
 
             item.url = photoJsonObject.getString("url_s")
+            item.owner = photoJsonObject.getString("owner")
             items.add(item)
         }
     }
