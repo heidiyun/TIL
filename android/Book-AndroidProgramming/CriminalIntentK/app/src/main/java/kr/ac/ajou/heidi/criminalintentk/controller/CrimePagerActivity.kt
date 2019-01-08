@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_crime_pager.*
 import kr.ac.ajou.heidi.criminalintentk.R
 import kr.ac.ajou.heidi.criminalintentk.model.CrimeLab
@@ -29,10 +30,11 @@ class CrimePagerActivity : AppCompatActivity() {
 
         val crimeId = intent.getSerializableExtra(EXTRA_CRIME_ID)
 
-        val crimes = CrimeLab.get().crimes
+        val crimes = CrimeLab.get(this)?.crimes!!
+
         activityCrimePagerViewPager.adapter = object : FragmentStatePagerAdapter(supportFragmentManager) {
             override fun getItem(position: Int): Fragment {
-                val crime= crimes.get(position)
+                val crime= crimes[position]
                 return CrimeFragment.newInstance(crime.id)
             }
 
@@ -41,7 +43,7 @@ class CrimePagerActivity : AppCompatActivity() {
         }
 
         for (i in 0 until crimes.size) {
-            if (crimes.get(i).id == crimeId) {
+            if (crimes[i].id == crimeId) {
                 activityCrimePagerViewPager.currentItem = i
                 break
 

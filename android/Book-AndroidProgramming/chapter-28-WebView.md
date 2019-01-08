@@ -4,6 +4,28 @@ PhotoGallery 내부에서 웹 콘텐트 보여주기.
 2. 디바이스의 브라우저 앱 사용
 
 ## 암시적 인텐트를 사용한 브라우저 앱 띄우기
+```kotlin
+inner class PhotoAdapter : RecyclerView.Adapter<PhotoHolder>() {
+
+    var galleryItems = /emptyList/<GalleryItem>()
+    var drawable: Drawable? = null
+
+  
+    override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
+        val galleryItem = galleryItems[position]
+        /with/(holder.itemView) *{*
+            this.setOnClickListener *{*
+/activity/?./applicationContext/?./let/*{*context *->*
+val intent = Intent(Intent.ACTION_VIEW, galleryItem.getPhotoPageUri())
+                    startActivity(intent)
+                *}*
+
+
+*            }*
+*        }*
+}
+
+```
 ## WebView 사용하여 사진 띄우기
 ```kotlin
 class PhotoPageFragment : VisibleFragment() {

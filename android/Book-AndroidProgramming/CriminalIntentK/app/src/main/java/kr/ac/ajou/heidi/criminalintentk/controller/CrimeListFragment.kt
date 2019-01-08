@@ -42,7 +42,7 @@ class CrimeListFragment : Fragment() {
 
 
     inner class CrimeViewAdapter : RecyclerView.Adapter<CrimeViewHolder>() {
-        var crimes: List<Crime> = listOf()
+        var crimes: ArrayList<Crime> = arrayListOf()
 
         override fun onCreateViewHolder(parent: ViewGroup, position: Int)
                 : CrimeViewHolder = CrimeViewHolder(parent)
@@ -77,9 +77,9 @@ class CrimeListFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
         view.crimeRecyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
-        val crimeLab = CrimeLab.get()
-        adapter.crimes = crimeLab.crimes
+        val crimeLab = CrimeLab.get(view?.context ?: return view)
         view.crimeRecyclerView.adapter = adapter
+        adapter.crimes = crimeLab?.crimes ?: return view
 
         return view
     }
@@ -88,7 +88,7 @@ class CrimeListFragment : Fragment() {
         when (item?.itemId) {
             R.id.menu_item_new_crime -> {
                 val crime = Crime()
-                CrimeLab.get().addCrime(crime)
+                CrimeLab.get(view?.context ?: return false)?.addCrime(crime)
                 view?.let {
                     val intent = CrimePagerActivity.newIntent(it.context, crime.id)
                     startActivity(intent)
@@ -141,22 +141,25 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateUI() {
-//        val crimeLab = CrimeLab.get()
-//        val crimes = crimeLab.crimes
-//
+
+        CrimeLab.get(view?.context ?: return)?.let {
+            adapter.crimes = it.crimes
+
+        }
         adapter.notifyDataSetChanged()
+
         updateSubtitle()
     }
 
     private fun updateSubtitle() {
-        val crimeLab = CrimeLab.get()
-        val crimeCount = crimeLab.crimes.size
+        val crimeLab = CrimeLab.get(view?.context ?: return)
+        val crimeCount = crimeLab?.crimes?.size ?: 0
         var subtitle: String? = resources.getQuantityString(
                 R.plurals.subtitle_plural, crimeCount, crimeCount
         )
 
         if (!subtitleVisible) {
-            subtitle  = null
+            subtitle = null
         }
 
         val activity = activity as AppCompatActivity

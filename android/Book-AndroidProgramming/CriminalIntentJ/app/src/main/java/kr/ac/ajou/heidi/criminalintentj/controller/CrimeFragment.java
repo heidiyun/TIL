@@ -177,7 +177,7 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        mReportButton = (Button) view.findViewById(R.id.crime_report);
+        mReportButton = view.findViewById(R.id.crime_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -221,7 +221,7 @@ public class CrimeFragment extends Fragment {
         mPhotoButton.setEnabled(canTakePhoto);
 
         if (canTakePhoto) {
-            Uri uri = FileProvider.getUriForFile(getContext(), "kr.ac.ajou.heidi.criminalintentj.fileprovider", mPhotoFile );
+            Uri uri = FileProvider.getUriForFile(getContext(), "kr.ac.ajou.heidi.criminalintentj.fileprovider", mPhotoFile);
             captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 
         }
@@ -339,4 +339,6 @@ public class CrimeFragment extends Fragment {
         CrimeLab.get(getActivity()).updateCrime(mCrime);
         mCallBacks.onCrimeUpdated(mCrime);
     }
+
+
 }
