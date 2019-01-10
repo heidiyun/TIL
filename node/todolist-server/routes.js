@@ -4,6 +4,7 @@ const Joi = router.Joi;
 
 const userController = require('./controllers/user');
 const imageController = require('./controllers/image');
+const todoController = require('./controllers/todo');
 
 apiRouter.get("/", (ctx) => {
     // throw new Error("what the fuck");
@@ -13,7 +14,8 @@ apiRouter.get("/", (ctx) => {
 
 apiRouter.route([
   ...userController,
-  ...imageController
+  ...imageController,
+  ...todoController
 ]);
 
 // apiRouter.post("/users",{

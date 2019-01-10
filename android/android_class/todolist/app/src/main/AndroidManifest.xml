@@ -3,10 +3,8 @@
           package="kr.ac.ajou.heidi.todolist">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-                    />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-                    />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 
     <application
@@ -32,12 +30,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
-                        android:pathPrefix="/users"
                         android:host="192.168.219.105"
                         android:scheme="http" />
             </intent-filter>
         </activity>
         <activity android:name=".ImageActivity" />
+        <activity android:name=".TodoDetailActivity" />
+        <activity android:name=".TodoListActivity" />
     </application>
 
 </manifest>

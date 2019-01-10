@@ -1,8 +1,9 @@
 package kr.ac.ajou.heidi.todolist
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
@@ -23,6 +24,18 @@ class MainActivity : AppCompatActivity() {
         signInButton.setOnClickListener {
             signIn()
         }
+
+        signUpButton.setOnClickListener {
+            val fragment = SignUpFragment()
+
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null).commit()
+
+            signInButton.visibility = View.GONE
+            signUpButton.visibility = View.GONE
+
+        }
     }
 
     private fun createBody(): JsonObject {
@@ -30,6 +43,16 @@ class MainActivity : AppCompatActivity() {
         jsonObject.addProperty("email", emailEditText.text.toString())
         jsonObject.addProperty("password", passwordEditText.text.toString())
         return jsonObject
+    }
+
+    override fun onBackPressed() {
+        if (signInButton.visibility == View.GONE) {
+            signInButton.visibility = View.VISIBLE
+            signUpButton.visibility = View.VISIBLE
+
+        } else
+        super.onBackPressed()
+
     }
 
     private fun signIn() {
@@ -42,9 +65,9 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Auth>, response: Response<Auth>) {
                 val result = response.body()
                 result?.let {
-                        result ->
-                    updateToken(this@MainActivity, result.accessToken)
-                    startActivity<ImageActivity>()
+                    Log.i("MainActivity", it.accessToken)
+                    updateToken(this@MainActivity, it.accessToken)
+                    startActivity<TodoListActivity>()
                 }
             }
         })

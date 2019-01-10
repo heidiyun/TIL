@@ -12,7 +12,6 @@ const s3 = new AWS.S3({
   region,
 });
 
-
 // Image Upload
 //   File      -> Storage Service: Google Storage, S3
 //  Database   -> Meta
@@ -38,6 +37,9 @@ const getSignedUrl = function (operation, filename) {
   });
 }
 
+const fs =  require("fs");
+
+
 
 const postImage = {
   path: "/images",
@@ -55,7 +57,15 @@ const postImage = {
 
     // Database Save
     // _id를 기반으로 파일명을 생성해야 한다.
-    const signedUrl = await getSignedUrl("putObject", "file5.png");
+
+    // const writeFileStream = fs.createWriteStream("a.jpeg");
+    // ctx.req.pipe(writeFileStream);
+
+    // ctx.body = {
+    //   message: "ok",
+    // }
+
+    const signedUrl = await getSignedUrl("putObject", "do.jpeg");
     ctx.body = {
       signedUrl,
     }
@@ -72,12 +82,12 @@ const getImage = {
     const filename = ctx.params.filename;
     const signedUrl = await getSignedUrl("getObject", filename);
 
-    ctx.body = signedUrl;
+    ctx.body = {
+      redirect_url: signedUrl
+    };
 //    ctx.redirect(signedUrl);
-    
   }
 }
-
 
 module.exports = [
   postImage,

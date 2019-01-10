@@ -26,9 +26,18 @@ const User = new Schema({
         type: String,
     },
 
-    access_token: {
-        type: String,
-    }
+    todolist: [
+        {
+            subject: {
+                type: String
+            },
+
+            solved: {
+                type: Boolean
+            },
+        },
+        
+    ]
 });
 
 
@@ -117,8 +126,8 @@ User.methods.generateAccessToken = async function () {
     return accessToken;
 }
 
-User.statics.generatePassword =  function (password) {
-    return  bcrypt.hash(password, saltRounds);
+User.statics.generatePassword = function (password) {
+    return bcrypt.hash(password, saltRounds);
 }
 
 

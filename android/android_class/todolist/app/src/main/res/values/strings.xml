@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">todolist</string>
+    <string name="sign_up_button">SignUp</string>
     <string name="sign_in_button">SignIn</string>
-    <string name="sign_in_email">email</string>
-    <string name="sign_in_password">password</string>
+    <string name="hint_email">email</string>
+    <string name="hint_name">name</string>
+    <string name="hint_password">password</string>
 </resources>
