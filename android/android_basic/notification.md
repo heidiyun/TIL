@@ -99,3 +99,28 @@ notificationManager.notify(0, builder.build())
 ```
 
 notification에 대한 android developer 문서: [알림  |  Android Developers](https://developer.android.com/guide/topics/ui/notifiers/notifications?hl=ko)
+
+## Notification Channel Importance
+1. IMPORTANCE_NONE : 알림이 상태바에 표시되지 않음.
+2. IMPORTANCE_MAX : 알림이 상태바를 덮는 형태로 표시됨
+3. IMPORTANCE_MIN : 알림이 상태바에 축소된 형태로 표시됨
+4. IMPORTANCE_LOW : 알림이 상태바에 큰 아이콘으로 표시됨
+5. IMPORTANCE_HIGH : 알림이 상태바를 덮는 형태로 표시됨
+6. IMPORTANCE_DEFAULT : 알림이 상태바에 큰 아이콘으로 표시됨
+7. IMPORTANCE_UNSPECIFIED : 사용을 권하지 않습니다. 잘못된 레벨 선택으로 애플리케이션이 비정상 종료 될 수 있습니다.
+
+_* HIGH & MAX *_
+![](notification/KakaoTalk_Photo_2019-01-15-16-29-47.jpeg)
+
+## 주의할 점
+notification channel은 한 번 생성되면 계속 같은 설정을 유지하기 때문에,
+::notification channel 속성에 변경사항이 생겼다면 꼭! 애플리케이션을 삭제하고 재설치 해야 한다.::
+
+
+
+
+
+
+
+
+#android/basic
