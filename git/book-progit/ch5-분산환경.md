@@ -326,7 +326,7 @@ git describe 명령은 -a 나 -s 옵션을 주고 만든 Annotated 태그가 필
 
 ### shortlog 보기
 이메일로 프로젝트 변경 사항을 사람들에게 알려야 할 때, git shortlog 명령으로 지난 릴리즈 이후의 변경 사항 목록을 쉽게 얻어올 수 있다.
-`$ git shortlog --no-mergest master --not v1.0.1`
+`$ git shortlog --no-merges master --not v1.0.1`
 v1.0.1 이후의 커밋을 요약해준다.
 
 
