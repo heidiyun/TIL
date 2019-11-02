@@ -22,7 +22,7 @@
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^5.1.0",
     "lodash": "^4.17.11",
-    "mongoose": "^5.3.4"
+    "mongoose": "^5.7.5"
   },
   "devDependencies": {
     "nodemon": "^1.18.4"
