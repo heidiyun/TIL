@@ -21,7 +21,7 @@
     "koa": "^2.5.3",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^5.1.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "mongoose": "^5.3.4"
   },
   "devDependencies": {
