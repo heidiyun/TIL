@@ -11,7 +11,7 @@
   "author": "YunJeong Goo",
   "license": "UNLICENSED",
   "dependencies": {
-    "aws-sdk": "^2.344.0",
+    "aws-sdk": "^2.814.0",
     "bcrypt": "^3.0.2",
     "bunyan": "^1.8.12",
     "dotenv": "^6.0.0",
