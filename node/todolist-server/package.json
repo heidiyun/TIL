@@ -17,7 +17,7 @@
     "dotenv": "^6.0.0",
     "humanize": "0.0.9",
     "humanize-number": "0.0.2",
-    "jsonwebtoken": "^8.3.0",
+    "jsonwebtoken": "^9.0.0",
     "koa": "^2.5.3",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^5.1.0",
